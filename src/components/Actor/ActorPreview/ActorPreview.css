@@ -1,0 +1,38 @@
+.ActorPreview{
+	display: flex;
+}
+
+.ActorPreview>.info{
+	margin-left: 5px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.ActorPreview .name{
+	font-weight: bold;
+	font-size: 1.5em;
+}
+
+.ActorPreview .birthday{
+	margin-bottom: 3px;
+}
+
+.ActorPreview .externalLinks a{
+	padding: 2px 5px;
+	border-radius: 5px;
+	font-weight: bold;
+	text-decoration: none;
+	cursor: pointer;
+}
+
+.ActorPreview .externalLinks a.linkImdb{
+	background: #f3ce13;
+	color: #000000;
+}
+
+.ActorPreview .externalLinks a.linkMovieDB{
+	margin-left: 3px;
+	background: #081c24;
+	color: #01d277;
+}
