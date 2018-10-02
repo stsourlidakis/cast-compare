@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import './ActorCompare.css';
+import styles from './ActorCompare.module.css';
 import Actor from '../../components/Actor/Actor';
 
 const dummyData = [{
@@ -61,7 +61,7 @@ class ActorCompare extends Component {
 
 	render () {
 		return (
-			<div className="ActorCompare">
+			<div className={styles.ActorCompare}>
 				<Actor data={dummyData[0]} matches={this.state.matches} 
 					autocompleteSearch={this.actorSearchInput} />
 				<Actor data={dummyData[1]} matches={this.state.matches} 

@@ -2,23 +2,23 @@
 	display: flex;
 }
 
-.ActorPreview>.info{
+.info{
 	margin-left: 5px;
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
 }
 
-.ActorPreview .name{
+.name{
 	font-weight: bold;
 	font-size: 1.5em;
 }
 
-.ActorPreview .birthday{
+.birthday{
 	margin-bottom: 3px;
 }
 
-.ActorPreview .externalLinks a{
+.ActorPreview a{
 	padding: 2px 5px;
 	border-radius: 5px;
 	font-weight: bold;
@@ -26,13 +26,16 @@
 	cursor: pointer;
 }
 
-.ActorPreview .externalLinks a.linkImdb{
+.externalLinks a + .externalLinks a{
+	margin-left: 3px;
+}
+
+.externalLinks a.linkImdb{
 	background: #f3ce13;
 	color: #000000;
 }
 
-.ActorPreview .externalLinks a.linkMovieDB{
-	margin-left: 3px;
+.externalLinks a.linkMovieDB{
 	background: #081c24;
 	color: #01d277;
 }
