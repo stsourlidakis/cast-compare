@@ -1,0 +1,8 @@
+.Autocomplete {
+	margin-bottom: 10px;
+}
+
+.Autocomplete input{
+	width: 100%;
+	border-radius: 5px;
+}

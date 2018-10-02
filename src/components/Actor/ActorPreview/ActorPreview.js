@@ -22,7 +22,6 @@ const ActorPreview = (props) => {
 						target="_blank">TheMovieDB</a>
 				</div>
 			</div>
-
 		</div>
 	);
 };
