@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { personAutocomplete } from '../../axios';
+import { personAutocomplete, theMovieDB } from '../../axios';
 
 import styles from './ActorCompare.module.css';
 import Actor from '../../components/Actor/Actor';
@@ -30,10 +30,22 @@ class ActorCompare extends Component {
 		}
 	}
 
-		//get the actor data
 	searchSelect = (actorKey, e) => {
 		const person = this.state.matches.find(match => match.name===e.target.value);
-		console.log('Person selected: ', person);
+		if(person && person.id){
+			theMovieDB.get(`/person/${person.id}`)
+				.then(res =>{
+					const newActorData = {...this.state.actorData};
+					newActorData[actorKey] = res.data;
+					this.setState({
+						actorData: newActorData
+					});
+				})
+				.catch(err => {
+					this.setState({ error: err.response.statusText });
+					console.log( err.response.data['status_message'] );
+				});
+		}
 	}
 
 	render () {
