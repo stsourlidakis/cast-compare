@@ -33,8 +33,8 @@ class Autocomplete extends Component {
 		return (
 			<div className={styles.Autocomplete}>
 				<input
-					className="awesomplete"
 					type="text"
+					placeholder="Start typing a name.."
 					id={this.autocompleteId}
 					onChange={this.props.change} />
 			</div>
