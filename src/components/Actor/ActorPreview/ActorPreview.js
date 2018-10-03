@@ -14,11 +14,11 @@ const ActorPreview = (props) => {
 				<div className={styles.externalLinks}>
 					<a className={styles.linkImdb}
 						href={`https://www.imdb.com/name/${props.actor.imdb_id}`}
-						rel="noopener"
+						rel="noopener noreferrer"
 						target="_blank">IMDb</a> 
 					<a className={styles.linkMovieDB}
 						href={`https://www.themoviedb.org/person/${props.actor.id}`}
-						rel="noopener"
+						rel="noopener noreferrer"
 						target="_blank">TheMovieDB</a>
 				</div>
 			</div>
