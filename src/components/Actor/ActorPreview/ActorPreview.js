@@ -1,21 +1,38 @@
 import React from 'react';
 
 import styles from './ActorPreview.module.css';
+import missing from '../../../assets/images/missingPhoto.svg';
 
 const imageSize = 'w45';	//"w45", "w185", "h632", "original"
 
 const ActorPreview = (props) => {
+	let imageSrc = missing;
+	if(props.actor.profile_path){
+		imageSrc = `https://image.tmdb.org/t/p/${imageSize}${props.actor.profile_path}`;
+	}
+
+	let imdbButton = null;
+	if(props.actor.imdb_id){
+		imdbButton = <a
+			className={styles.linkImdb}
+			href={`https://www.imdb.com/name/${props.actor.imdb_id}`}
+			rel="noopener noreferrer"
+			target="_blank">IMDb</a>;
+	}
+
+	let birthday = null;
+	if(props.actor.birthday){
+		birthday = <div className={styles.birthday}>Born: {props.actor.birthday}</div>;
+	}
+
 	return (
 		<div className={styles.ActorPreview}>
-			<img src={`https://image.tmdb.org/t/p/${imageSize}${props.actor.profile_path}`} alt={props.actor.name} />
+			<img src={imageSrc} alt={props.actor.name} width="45" height="auto" />
 			<div className={styles.info}>
 				<div className={styles.name}>{props.actor.name}</div>
-				<div className={styles.birthday}>Born: {props.actor.birthday}</div>
+				{birthday}
 				<div className={styles.externalLinks}>
-					<a className={styles.linkImdb}
-						href={`https://www.imdb.com/name/${props.actor.imdb_id}`}
-						rel="noopener noreferrer"
-						target="_blank">IMDb</a> 
+					{imdbButton}
 					<a className={styles.linkMovieDB}
 						href={`https://www.themoviedb.org/person/${props.actor.id}`}
 						rel="noopener noreferrer"
