@@ -2,6 +2,10 @@
 	margin-bottom: 10px;
 }
 
+.Autocomplete div{
+	width: 100%;
+}
+
 .Autocomplete input{
 	width: 100%;
 	border-radius: 5px;

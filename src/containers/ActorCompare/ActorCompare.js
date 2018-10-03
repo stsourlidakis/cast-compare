@@ -45,27 +45,38 @@ const dummyData = [{
 
 class ActorCompare extends Component {
 	state = {
-		matches: ['Tim Robbins', 'Tom Cruz', 'Brad Pit']
+		matches: []
 	}
 
-	actorSearchInput = (e) => {
+	searchChange = (e) => {
 		const match = this.state.matches.find(match => match===e.target.value);
 		if(match){
 			//get the actor data
-			console.log('Found a match: ', match);
+			console.log('(change) Found a match: ', match);
 		} else {
-			//make a request to autocomplete endpoint
+			//make a request to the autocomplete endpoint
 			console.log('Changed: ', e.target.value);
 		}
+	}
+
+	searchSelect = (e) => {
+		//get the actor data
+		console.log('Found a match: ', e.target.value);
 	}
 
 	render () {
 		return (
 			<div className={styles.ActorCompare}>
-				<Actor data={dummyData[0]} matches={this.state.matches} 
-					autocompleteSearch={this.actorSearchInput} />
-				<Actor data={dummyData[1]} matches={this.state.matches} 
-					autocompleteSearch={this.actorSearchInput} />
+				<Actor
+					data={dummyData[0]}
+					matches={this.state.matches} 
+					autocompleteChange={this.searchChange}
+					autocompleteSelect={this.searchSelect} />
+				<Actor
+					data={dummyData[1]}
+					matches={this.state.matches} 
+					autocompleteChange={this.searchChange}
+					autocompleteSelect={this.searchSelect} />
 			</div>
 		);
 	}
