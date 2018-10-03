@@ -26,7 +26,9 @@ class Autocomplete extends Component {
 	}
 
 	componentWillReceiveProps = (nextProps) => {
-		this.awesompleteInstance.list = nextProps.matches;
+		if(nextProps.matches!==this.props.matches){
+			this.awesompleteInstance.list = nextProps.matches;
+		}
 	}
 
 	render() {
