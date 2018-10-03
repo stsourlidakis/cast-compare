@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { personAutocomplete } from '../../axios';
 
 import styles from './ActorCompare.module.css';
 import Actor from '../../components/Actor/Actor';
@@ -45,23 +46,31 @@ const dummyData = [{
 
 class ActorCompare extends Component {
 	state = {
-		matches: []
+		matches: [],
+		autocompleteNames: []
 	}
 
 	searchChange = (e) => {
-		const match = this.state.matches.find(match => match===e.target.value);
-		if(match){
-			//get the actor data
-			console.log('(change) Found a match: ', match);
-		} else {
-			//make a request to the autocomplete endpoint
-			console.log('Changed: ', e.target.value);
+		const searchValue = e.target.value;
+		if(searchValue.length>0){
+			personAutocomplete.get(`/?name=${searchValue}`)
+				.then(res =>{
+					this.setState({
+						matches: res.data,
+						autocompleteNames: res.data.map(match => match.name)
+					});
+				})
+				.catch(err => {
+					this.setState({ error: err.response.statusText });
+					console.log( err.response.data.error );
+				});
 		}
 	}
 
 	searchSelect = (e) => {
 		//get the actor data
-		console.log('Found a match: ', e.target.value);
+		const person = this.state.matches.find(match => match.name===e.target.value);
+		console.log('Person selected: ', person);
 	}
 
 	render () {
@@ -69,12 +78,12 @@ class ActorCompare extends Component {
 			<div className={styles.ActorCompare}>
 				<Actor
 					data={dummyData[0]}
-					matches={this.state.matches} 
+					matches={this.state.autocompleteNames} 
 					autocompleteChange={this.searchChange}
 					autocompleteSelect={this.searchSelect} />
 				<Actor
 					data={dummyData[1]}
-					matches={this.state.matches} 
+					matches={this.state.autocompleteNames} 
 					autocompleteChange={this.searchChange}
 					autocompleteSelect={this.searchSelect} />
 			</div>
