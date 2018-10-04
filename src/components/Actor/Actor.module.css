@@ -2,15 +2,6 @@
 	justify-self: center;
 }
 
-.Actor .card{
-	box-sizing: border-box;
-	padding: 10px;
-	border: 1px solid;
-	border-radius: 5px;
-	min-width: 230px;
-	max-width: 300px;
-}
-
 .missing{
 	text-align: center;
 }

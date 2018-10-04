@@ -1,6 +1,7 @@
 import React from 'react';
 
 import styles from './Actor.module.css';
+import Card from '../UI/Card/Card';
 import ActorPreview from './ActorPreview/ActorPreview';
 import Credits from './Credits/Credits';
 import Autocomplete from '../UI/Autocomplete/Autocomplete';
@@ -18,13 +19,13 @@ const Actor = (props) => {
 	}
 	return (
 		<div className={styles.Actor}>
-			<div className={styles.card}>
+			<Card>
 				<Autocomplete 
 					matches={props.matches}
 					change={props.autocompleteChange} 
 					select={props.autocompleteSelect} />
 				{preview}
-			</div>
+			</Card>
 			{credits}
 		</div>
 	);
