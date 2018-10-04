@@ -3,3 +3,25 @@ body {
   padding: 0;
   font-family: sans-serif;
 }
+
+a.externalLink{
+	padding: 2px 5px;
+	border-radius: 5px;
+	font-weight: bold;
+	text-decoration: none;
+	cursor: pointer;
+}
+
+a.externalLink + a.externalLink{
+	margin-left: 3px;
+}
+
+a.externalLink.linkImdb{
+	background: #f3ce13;
+	color: #000000;
+}
+
+a.externalLink.linkMovieDB{
+	background: #081c24;
+	color: #01d277;
+}

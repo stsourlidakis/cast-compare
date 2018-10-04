@@ -17,25 +17,3 @@
 .birthday{
 	margin-bottom: 3px;
 }
-
-.ActorPreview a{
-	padding: 2px 5px;
-	border-radius: 5px;
-	font-weight: bold;
-	text-decoration: none;
-	cursor: pointer;
-}
-
-.externalLinks a + .externalLinks a{
-	margin-left: 3px;
-}
-
-.externalLinks a.linkImdb{
-	background: #f3ce13;
-	color: #000000;
-}
-
-.externalLinks a.linkMovieDB{
-	background: #081c24;
-	color: #01d277;
-}

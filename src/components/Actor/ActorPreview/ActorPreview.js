@@ -14,7 +14,7 @@ const ActorPreview = (props) => {
 	let imdbButton = null;
 	if(props.actor.imdb_id){
 		imdbButton = <a
-			className={styles.linkImdb}
+			className="externalLink linkImdb"
 			href={`https://www.imdb.com/name/${props.actor.imdb_id}`}
 			rel="noopener noreferrer"
 			target="_blank">IMDb</a>;
@@ -33,7 +33,7 @@ const ActorPreview = (props) => {
 				{birthday}
 				<div className={styles.externalLinks}>
 					{imdbButton}
-					<a className={styles.linkMovieDB}
+					<a className="externalLink linkMovieDB"
 						href={`https://www.themoviedb.org/person/${props.actor.id}`}
 						rel="noopener noreferrer"
 						target="_blank">TheMovieDB</a>
