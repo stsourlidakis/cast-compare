@@ -33,8 +33,12 @@ class ActorCompare extends Component {
 	searchSelect = (actorKey, e) => {
 		const person = this.state.matches.find(match => match.name===e.target.value);
 		if(person && person.id){
-			theMovieDB.get(`/person/${person.id}`)
+			theMovieDB.get(`/person/${person.id}?append_to_response=combined_credits`)
 				.then(res =>{
+					const sortedCredits = res.data.combined_credits.cast.sort((a, b) => a.popularity < b.popularity);
+					delete res.data.combined_credits;
+					res.data.credits = sortedCredits;
+					
 					const newActorData = {...this.state.actorData};
 					newActorData[actorKey] = res.data;
 					this.setState({
