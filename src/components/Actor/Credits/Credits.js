@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 
+import styles from './Credits.module.css';
+
 class Credits extends Component {
 	DEFAULT_CREDITS_LIMIT = 5;
 
@@ -47,7 +49,7 @@ class Credits extends Component {
 		}
 
 		return (
-			<div className="Credits">
+			<div className={styles.Credits}>
 				{this.props.credits.slice(0, this.state.creditsLimit).map( (c, i) =>
 					<div key={i}>{c.media_type==='tv' ? c.name : c.title}</div>
 				)}

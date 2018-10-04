@@ -1,8 +1,5 @@
 .ActorCompare{
 	box-sizing: border-box;
-	width: 80%;
+	width: 96%;
 	margin: 36px auto;
-	display: grid;
-	grid-template-columns: 1fr 1fr;
-	padding: 20px;
 }

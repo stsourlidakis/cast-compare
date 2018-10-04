@@ -1,5 +1,14 @@
 .Actor{
-	justify-self: center;
+	display: flex;
+	box-sizing: border-box;
+	padding: 10px;
+	height: 190px;
+	overflow-x: auto;
+	border: 1px solid;
+}
+
+.Actor + .Actor {
+	margin-top: 10px;
 }
 
 .missing{
