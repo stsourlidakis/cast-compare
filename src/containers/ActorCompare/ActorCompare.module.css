@@ -1,5 +1,5 @@
 .ActorCompare{
+	display: flex;
 	box-sizing: border-box;
-	width: 96%;
-	margin: 36px auto;
+	padding: 36px 2%;
 }
