@@ -9,7 +9,7 @@ const Actor = (props) => {
 	return (
 		<div className={styles.Actor}>
 			<Card>
-				<ActorPreview actor={props.data} />
+				<ActorPreview actor={props.data} remove={props.remove}/>
 			</Card>
 			<Credits credits={props.data.credits} actorId={props.data.id} />
 		</div>

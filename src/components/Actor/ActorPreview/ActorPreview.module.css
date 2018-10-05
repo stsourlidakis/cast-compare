@@ -14,3 +14,25 @@
 .birthday{
 	margin-bottom: 3px;
 }
+
+.remove{
+	position: absolute;	/* absolute to the first "position: relative" parent, in this case Actor */
+	top: 0;
+	right: 0;
+
+	cursor: pointer;
+	padding: 7px;
+	border: 1px solid #d43f3a;
+	border-bottom-left-radius: 20px;
+	font-weight: bold;
+	background: #d9534f;
+	color: #fff;
+}
+
+.remove:hover{
+	background: #db6360;
+}
+
+.remove:active{
+	background: #d9534f;
+}

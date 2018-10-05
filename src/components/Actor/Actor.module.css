@@ -6,6 +6,7 @@
 	border: 1px solid;
 	margin-right: 10px;
 	margin-bottom: 10px;
+	position: relative;	/* this is needed so the remove button can be positioned relative to this element https://stackoverflow.com/questions/10487292/position-absolute-but-relative-to-parent */
 }
 
 .missing{

@@ -53,6 +53,14 @@ class ActorCompare extends Component {
 		}
 	}
 
+	removeActor = (actorIndex) => {
+		const newActors = this.state.actors.slice();
+		newActors.splice(actorIndex, 1);
+		this.setState({
+			actors: newActors
+		});
+	}
+
 	render () {
 		return (
 			<div className={styles.ActorCompare}>
@@ -61,7 +69,12 @@ class ActorCompare extends Component {
 					change={this.searchChange} 
 					select={this.searchSelect} />
 				<div className={styles.Actors}>
-					{this.state.actors.map((actor, i) => <Actor key={i} data={actor} />)}
+					{this.state.actors.map((actor, i) =>
+						<Actor
+							key={i}
+							data={actor}
+							remove={() => this.removeActor(i)} />
+					)}
 				</div>
 			</div>
 		);

@@ -29,6 +29,7 @@ const ActorPreview = (props) => {
 		<div className={styles.ActorPreview}>
 			<img src={imageSrc} alt={props.actor.name} width="45" height="auto" />
 			<div className={styles.info}>
+				<button className={styles.remove} onClick={props.remove}>X</button>
 				<div className={styles.name}>{props.actor.name}</div>
 				{birthday}
 				<div className={styles.externalLinks}>
