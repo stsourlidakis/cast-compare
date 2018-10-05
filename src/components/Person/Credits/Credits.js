@@ -6,24 +6,8 @@ class Credits extends Component {
 	DEFAULT_CREDITS_LIMIT = 5;
 
 	state = {
-		personId: this.props.personId,
 		creditsLimited: true,
 		creditsLimit: this.DEFAULT_CREDITS_LIMIT
-	}
-
-	componentWillReceiveProps = (nextProps) => {
-		if(nextProps.personId!==this.state.personId){
-			//update the personId and reset the credits filter
-			this.setState({
-				personId: nextProps.personId,
-				creditsLimited: true,
-				creditsLimit: this.DEFAULT_CREDITS_LIMIT
-			});
-		}
-	}
-
-	shouldComponentUpdate = (nextProps, nextState) => {
-		return nextProps.personId!==this.state.personId || nextState!==this.state;
 	}
 
 	showMore = () => {
