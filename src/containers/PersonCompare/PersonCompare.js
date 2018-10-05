@@ -9,7 +9,8 @@ class PersonCompare extends Component {
 	state = {
 		people: [],
 		autocompleteData: [],
-		autocompleteNames: []
+		autocompleteNames: [],
+		commonCredits: []
 	}
 
 	searchChange = (e) => {
@@ -40,9 +41,7 @@ class PersonCompare extends Component {
 					res.data.credits = sortedCredits;
 					
 					newPeople.push(res.data);
-					this.setState({
-						people: newPeople
-					});
+					this.setState({ people: newPeople}, this.updateCommonCredits);
 
 					e.target.value = '';
 				})
@@ -53,12 +52,56 @@ class PersonCompare extends Component {
 		}
 	}
 
+	updateCommonCredits = () => {
+		if(this.state.people.length<2){
+			this.setState({
+				commonCredits: []
+			});
+			return;
+		}
+
+		//	In order to find the common credits we will check if the credits from
+		//	the person with the least of them are present in every person's credit list
+
+		//	get only the credit lists and sort them in asc order so the first one has the least number of credits
+		const creditLists = this.state.people.map(p => p.credits).sort((a, b) => a.length>b.length);
+		const numberOfLists = creditLists.length;
+		let commonCredits = [];
+		//	check if each credit in the first's person list are inside the other lists
+		creditLists[0].forEach(credit => {
+			let isCommon = true;
+
+			for(let i=1; i<numberOfLists; i++){
+				if(!this.creditInCreditList(credit, creditLists[i])){
+					isCommon = false;
+					break;
+				}
+			}
+
+			if(isCommon){
+				commonCredits.push(credit);
+			}
+		});
+
+		this.setState({
+			commonCredits
+		});
+	}
+
+	creditInCreditList = (credit, list) => {
+		for(const c of list){
+			if (c.id === credit.id){
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	removePerson = (personIndex) => {
 		const newPeople = this.state.people.slice();
 		newPeople.splice(personIndex, 1);
-		this.setState({
-			people: newPeople
-		});
+		this.setState({ people: newPeople }, this.updateCommonCredits);
 	}
 
 	render () {
@@ -68,6 +111,9 @@ class PersonCompare extends Component {
 					matches={this.state.autocompleteNames}
 					change={this.searchChange} 
 					select={this.searchSelect} />
+				<div className={styles.credits}>
+					{this.state.commonCredits.map(c => c.media_type==='tv' ? c.name : c.title+', ')}
+				</div>
 				<div className={styles.People}>
 					{this.state.people.map((person, i) =>
 						<Person
