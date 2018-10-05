@@ -2,14 +2,13 @@ import React, { Component } from 'react';
 import { personAutocomplete, theMovieDB } from '../../axios';
 
 import styles from './ActorCompare.module.css';
+import Autocomplete from '../../components/UI/Autocomplete/Autocomplete';
 import Actor from '../../components/Actor/Actor';
 
 class ActorCompare extends Component {
-	NUMBER_OF_ACTORS = 2;
-
 	state = {
-		actorData: {},
-		matches: [],
+		actors: [],
+		autocompleteData: [],
 		autocompleteNames: []
 	}
 
@@ -19,7 +18,7 @@ class ActorCompare extends Component {
 			personAutocomplete.get(`/?name=${searchValue}`)
 				.then(res =>{
 					this.setState({
-						matches: res.data,
+						autocompleteData: res.data,
 						autocompleteNames: res.data.map(match => match.name)
 					});
 				})
@@ -30,20 +29,22 @@ class ActorCompare extends Component {
 		}
 	}
 
-	searchSelect = (actorKey, e) => {
-		const person = this.state.matches.find(match => match.name===e.target.value);
+	searchSelect = (e) => {
+		const person = this.state.autocompleteData.find(person => person.name===e.target.value);
 		if(person && person.id){
 			theMovieDB.get(`/person/${person.id}?append_to_response=combined_credits`)
 				.then(res =>{
+					const newActors = this.state.actors.slice();
+
 					const sortedCredits = res.data.combined_credits.cast.sort((a, b) => a.popularity < b.popularity);
-					delete res.data.combined_credits;
 					res.data.credits = sortedCredits;
 					
-					const newActorData = {...this.state.actorData};
-					newActorData[actorKey] = res.data;
+					newActors.push(res.data);
 					this.setState({
-						actorData: newActorData
+						actors: newActors
 					});
+
+					e.target.value = '';
 				})
 				.catch(err => {
 					this.setState({ error: err.response.statusText });
@@ -53,21 +54,15 @@ class ActorCompare extends Component {
 	}
 
 	render () {
-		const actors = [];
-		for (let i = 0; i < this.NUMBER_OF_ACTORS; i++) {
-			actors.push(
-				<Actor
-					key={i}
-					data={this.state.actorData[`actor${i}`]}
-					matches={this.state.autocompleteNames}
-					autocompleteChange={this.searchChange}
-					autocompleteSelect={(e) => this.searchSelect(`actor${i}`, e) } />
-			);
-		}
-
 		return (
 			<div className={styles.ActorCompare}>
-				{actors}
+				<Autocomplete 
+					matches={this.state.autocompleteNames}
+					change={this.searchChange} 
+					select={this.searchSelect} />
+				<div className={styles.Actors}>
+					{this.state.actors.map((actor, i) => <Actor key={i} data={actor} />)}
+				</div>
 			</div>
 		);
 	}

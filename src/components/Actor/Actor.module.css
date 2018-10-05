@@ -1,13 +1,11 @@
 .Actor{
 	box-sizing: border-box;
 	padding: 10px;
-	height: 100%;
-	display:inline-block;
+	min-height: 270px;
+	height: 100%;	/* this is needed so the element won't grow verticaly when it's sibling do */
 	border: 1px solid;
-}
-
-.Actor + .Actor {
-	margin-left: 10px;
+	margin-right: 10px;
+	margin-bottom: 10px;
 }
 
 .missing{
