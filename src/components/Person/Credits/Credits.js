@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 
 import styles from './Credits.module.css';
+import Credit from './Credit/Credit';
 
 class Credits extends Component {
-	DEFAULT_CREDITS_LIMIT = 5;
+	DEFAULT_CREDITS_LIMIT = 6;
 
 	state = {
 		creditsLimited: true,
@@ -34,9 +35,11 @@ class Credits extends Component {
 
 		return (
 			<div className={styles.Credits}>
-				{this.props.credits.slice(0, this.state.creditsLimit).map( (c, i) =>
-					<div key={i}>{c.media_type==='tv' ? c.name : c.title}</div>
-				)}
+				<div className={styles.grid}>
+					{this.props.credits.slice(0, this.state.creditsLimit).map( (c, i) =>
+						<Credit data={c} key={i} />
+					)}
+				</div>
 				{toggleLimitButton}
 			</div>
 		);

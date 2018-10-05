@@ -107,9 +107,9 @@ class PersonCompare extends Component {
 	render () {
 		return (
 			<div className={styles.PersonCompare}>
-				<Autocomplete 
+				<Autocomplete
 					matches={this.state.autocompleteNames}
-					change={this.searchChange} 
+					change={this.searchChange}
 					select={this.searchSelect} />
 				<div className={styles.credits}>
 					{this.state.commonCredits.map(c => c.media_type==='tv' ? c.name : c.title+', ')}
