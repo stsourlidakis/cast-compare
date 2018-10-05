@@ -1,10 +1,10 @@
-.ActorCompare{
+.PersonCompare{
 	box-sizing: border-box;
 	padding: 36px 2%;
 	height: 100%;
 }
 
-.Actors{
+.People{
 	display: flex;
 	flex-direction: row;
 	flex-wrap: wrap;

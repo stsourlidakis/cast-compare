@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 import { personAutocomplete, theMovieDB } from '../../axios';
 
-import styles from './ActorCompare.module.css';
+import styles from './PersonCompare.module.css';
 import Autocomplete from '../../components/UI/Autocomplete/Autocomplete';
-import Actor from '../../components/Actor/Actor';
+import Person from '../../components/Person/Person';
 
-class ActorCompare extends Component {
+class PersonCompare extends Component {
 	state = {
-		actors: [],
+		people: [],
 		autocompleteData: [],
 		autocompleteNames: []
 	}
@@ -34,14 +34,14 @@ class ActorCompare extends Component {
 		if(person && person.id){
 			theMovieDB.get(`/person/${person.id}?append_to_response=combined_credits`)
 				.then(res =>{
-					const newActors = this.state.actors.slice();
+					const newPeople = this.state.people.slice();
 
 					const sortedCredits = res.data.combined_credits.cast.sort((a, b) => a.popularity < b.popularity);
 					res.data.credits = sortedCredits;
 					
-					newActors.push(res.data);
+					newPeople.push(res.data);
 					this.setState({
-						actors: newActors
+						people: newPeople
 					});
 
 					e.target.value = '';
@@ -53,27 +53,27 @@ class ActorCompare extends Component {
 		}
 	}
 
-	removeActor = (actorIndex) => {
-		const newActors = this.state.actors.slice();
-		newActors.splice(actorIndex, 1);
+	removePerson = (personIndex) => {
+		const newPeople = this.state.people.slice();
+		newPeople.splice(personIndex, 1);
 		this.setState({
-			actors: newActors
+			people: newPeople
 		});
 	}
 
 	render () {
 		return (
-			<div className={styles.ActorCompare}>
+			<div className={styles.PersonCompare}>
 				<Autocomplete 
 					matches={this.state.autocompleteNames}
 					change={this.searchChange} 
 					select={this.searchSelect} />
-				<div className={styles.Actors}>
-					{this.state.actors.map((actor, i) =>
-						<Actor
+				<div className={styles.People}>
+					{this.state.people.map((person, i) =>
+						<Person
 							key={i}
-							data={actor}
-							remove={() => this.removeActor(i)} />
+							data={person}
+							remove={() => this.removePerson(i)} />
 					)}
 				</div>
 			</div>
@@ -81,4 +81,4 @@ class ActorCompare extends Component {
 	}
 }
 
-export default ActorCompare;
+export default PersonCompare;

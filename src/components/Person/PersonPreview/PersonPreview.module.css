@@ -1,4 +1,4 @@
-.ActorPreview{
+.PersonPreview{
 	display: flex;
 }
 
@@ -16,7 +16,7 @@
 }
 
 .remove{
-	position: absolute;	/* absolute to the first "position: relative" parent, in this case Actor */
+	position: absolute;	/* absolute to the first "position: relative" parent, in this case Person */
 	top: 0;
 	right: 0;
 
