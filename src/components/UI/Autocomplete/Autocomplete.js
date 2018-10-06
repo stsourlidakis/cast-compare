@@ -17,6 +17,10 @@ class Autocomplete extends Component {
 	componentDidMount = () => {
 		this.awesompleteInstance = new awesomplete(this.inputRef.current, this.awesompleteOptions);
 		this.inputRef.current.addEventListener('awesomplete-selectcomplete', this.props.select);
+		
+		if(this.props.focused){
+			this.inputRef.current.focus();
+		}
 	}
 
 	componentWillUnmount = () => {

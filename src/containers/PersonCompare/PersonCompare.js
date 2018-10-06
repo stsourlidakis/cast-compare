@@ -112,7 +112,8 @@ class PersonCompare extends Component {
 					<Autocomplete
 						matches={this.state.autocompleteNames}
 						change={this.searchChange}
-						select={this.searchSelect} />
+						select={this.searchSelect}
+						focused={true} />
 				</div>
 				<Credits credits={this.state.commonCredits} displayType="row" />
 				<div className={styles.People}>
