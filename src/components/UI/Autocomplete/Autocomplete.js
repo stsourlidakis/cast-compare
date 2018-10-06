@@ -6,8 +6,7 @@ import styles from './Autocomplete.module.css';
 
 class Autocomplete extends Component {
 	awesompleteInstance = null;
-	inputElement = null;
-	autocompleteId = `autocomplete-${~~(Math.random()*1000)}`;
+	inputRef = React.createRef();
 	awesompleteOptions = {
 		autoFirst: true,
 		sort: false,	//items are already sorted by number of votes on imdb
@@ -16,13 +15,12 @@ class Autocomplete extends Component {
 	}
 
 	componentDidMount = () => {
-		this.inputElement = document.getElementById(this.autocompleteId);
-		this.awesompleteInstance = new awesomplete(this.inputElement, this.awesompleteOptions);
-		this.inputElement.addEventListener('awesomplete-selectcomplete', this.props.select);
+		this.awesompleteInstance = new awesomplete(this.inputRef.current, this.awesompleteOptions);
+		this.inputRef.current.addEventListener('awesomplete-selectcomplete', this.props.select);
 	}
 
 	componentWillUnmount = () => {
-		this.inputElement.removeEventListener('awesomplete-selectcomplete', this.props.select);
+		this.inputRef.current.removeEventListener('awesomplete-selectcomplete', this.props.select);
 	}
 
 	componentWillReceiveProps = (nextProps) => {
@@ -37,7 +35,7 @@ class Autocomplete extends Component {
 				<input
 					type="text"
 					placeholder="Start typing a name.."
-					id={this.autocompleteId}
+					ref={this.inputRef}
 					onChange={this.props.change} />
 			</div>
 		);
