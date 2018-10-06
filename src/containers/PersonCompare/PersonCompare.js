@@ -116,6 +116,16 @@ class PersonCompare extends Component {
 	}
 
 	render () {
+		let commonCredits = <div className={styles.helpText}>Select two or more people</div>;
+		if(this.state.people.length>1){
+			if(this.state.commonCredits.length>0){
+				commonCredits = <div className={styles.commonCreditsWrapper}>
+									<Credits credits={this.state.commonCredits} displayType="row" />
+								</div>;
+			} else {
+				commonCredits = <div className={styles.helpText}>No common Movies or TV shows found</div>;
+			}
+		}
 		return (
 			<div className={styles.PersonCompare}>
 				<div className={styles.autocompleteWrapper}>
@@ -125,7 +135,7 @@ class PersonCompare extends Component {
 						select={this.searchSelect}
 						focused={true} />
 				</div>
-				<Credits credits={this.state.commonCredits} displayType="row" />
+				{commonCredits}
 				<div className={styles.People}>
 					{this.state.people.map((person, i) =>
 						<Person
