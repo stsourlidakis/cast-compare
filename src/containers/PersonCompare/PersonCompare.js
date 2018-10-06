@@ -41,7 +41,14 @@ class PersonCompare extends Component {
 					const isActor = res.data.known_for_department ==='Acting';
 					const relevantCredits = res.data.combined_credits[isActor ? 'cast' : 'crew'];
 
-					const sortedCredits = relevantCredits.sort((a, b) => a.popularity < b.popularity);
+					const uniqueCredits = relevantCredits.reduce((unique, credit) => {
+						if(!unique.find(c => c.id===credit.id)){
+							unique.push(credit);
+						}
+						return unique;
+					}, []);
+
+					const sortedCredits = uniqueCredits.sort((a, b) => a.popularity < b.popularity);
 					res.data.credits = sortedCredits;
 					
 					newPeople.push(res.data);
