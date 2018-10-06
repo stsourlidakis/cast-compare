@@ -38,7 +38,10 @@ class PersonCompare extends Component {
 				.then(res =>{
 					const newPeople = this.state.people.slice();
 
-					const sortedCredits = res.data.combined_credits.cast.sort((a, b) => a.popularity < b.popularity);
+					const isActor = res.data.known_for_department ==='Acting';
+					const relevantCredits = res.data.combined_credits[isActor ? 'cast' : 'crew'];
+
+					const sortedCredits = relevantCredits.sort((a, b) => a.popularity < b.popularity);
 					res.data.credits = sortedCredits;
 					
 					newPeople.push(res.data);
