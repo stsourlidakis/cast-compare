@@ -7,7 +7,7 @@ class Credits extends Component {
 	DEFAULT_CREDITS_LIMIT = 6;
 
 	state = {
-		creditsLimited: true,
+		creditsLimited: !this.props.expanded,
 		creditsLimit: this.DEFAULT_CREDITS_LIMIT
 	}
 
@@ -27,16 +27,22 @@ class Credits extends Component {
 
 	render() {
 		let toggleLimitButton = null;
-		if(!this.state.creditsLimited){
-			toggleLimitButton = <button onClick={this.showLess}>Less..</button>;
-		} else if(this.props.credits.length>this.state.creditsLimit){
-			toggleLimitButton = <button onClick={this.showMore}>More..</button>;
+		if(!this.props.expanded){
+			if(!this.state.creditsLimited){
+				toggleLimitButton = <button onClick={this.showLess}>Less..</button>;
+			} else if(this.props.credits.length>this.state.creditsLimit){
+				toggleLimitButton = <button onClick={this.showMore}>More..</button>;
+			}
 		}
+
+		const credits = this.props.expanded
+						? this.props.credits
+						: this.props.credits.slice(0, this.state.creditsLimit);
 
 		return (
 			<div className={this.props.displayType==='row' ? styles.row : ''}>
 				<div className={this.props.displayType==='row' ? styles.row : styles.grid}>
-					{this.props.credits.slice(0, this.state.creditsLimit).map( (c, i) =>
+					{credits.map( (c, i) =>
 						<Credit data={c} key={i} />
 					)}
 				</div>

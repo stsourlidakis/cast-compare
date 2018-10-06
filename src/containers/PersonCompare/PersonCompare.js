@@ -120,7 +120,7 @@ class PersonCompare extends Component {
 		if(this.state.people.length>1){
 			if(this.state.commonCredits.length>0){
 				commonCredits = <div className={styles.commonCreditsWrapper}>
-									<Credits credits={this.state.commonCredits} displayType="row" />
+									<Credits credits={this.state.commonCredits} displayType="row" expanded />
 								</div>;
 			} else {
 				commonCredits = <div className={styles.helpText}>No common Movies or TV shows found</div>;
