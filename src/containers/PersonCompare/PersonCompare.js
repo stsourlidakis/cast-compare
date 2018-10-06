@@ -108,10 +108,12 @@ class PersonCompare extends Component {
 	render () {
 		return (
 			<div className={styles.PersonCompare}>
-				<Autocomplete
-					matches={this.state.autocompleteNames}
-					change={this.searchChange}
-					select={this.searchSelect} />
+				<div className={styles.autocompleteWrapper}>
+					<Autocomplete
+						matches={this.state.autocompleteNames}
+						change={this.searchChange}
+						select={this.searchSelect} />
+				</div>
 				<Credits credits={this.state.commonCredits} displayType="row" />
 				<div className={styles.People}>
 					{this.state.people.map((person, i) =>

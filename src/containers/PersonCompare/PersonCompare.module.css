@@ -1,3 +1,9 @@
+.autocompleteWrapper{
+	margin: auto;
+	width: 20%;
+	min-width: 200px;
+}
+
 .PersonCompare{
 	box-sizing: border-box;
 	padding: 36px 2%;
