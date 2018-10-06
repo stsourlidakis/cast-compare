@@ -34,13 +34,15 @@ class Credits extends Component {
 		}
 
 		return (
-			<div className={styles.Credits}>
-				<div className={styles.grid}>
+			<div className={this.props.displayType==='row' ? styles.row : ''}>
+				<div className={this.props.displayType==='row' ? styles.row : styles.grid}>
 					{this.props.credits.slice(0, this.state.creditsLimit).map( (c, i) =>
 						<Credit data={c} key={i} />
 					)}
 				</div>
-				{toggleLimitButton}
+				<div className={styles.buttonWrapper}>
+					{toggleLimitButton}
+				</div>
 			</div>
 		);
 	}

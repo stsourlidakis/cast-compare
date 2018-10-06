@@ -4,6 +4,7 @@ import { personAutocomplete, theMovieDB } from '../../axios';
 import styles from './PersonCompare.module.css';
 import Autocomplete from '../../components/UI/Autocomplete/Autocomplete';
 import Person from '../../components/Person/Person';
+import Credits from '../../components/Person/Credits/Credits';
 
 class PersonCompare extends Component {
 	state = {
@@ -111,9 +112,7 @@ class PersonCompare extends Component {
 					matches={this.state.autocompleteNames}
 					change={this.searchChange}
 					select={this.searchSelect} />
-				<div className={styles.credits}>
-					{this.state.commonCredits.map(c => c.media_type==='tv' ? c.name : c.title+', ')}
-				</div>
+				<Credits credits={this.state.commonCredits} displayType="row" />
 				<div className={styles.People}>
 					{this.state.people.map((person, i) =>
 						<Person
