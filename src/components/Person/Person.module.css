@@ -1,7 +1,7 @@
 .Person{
 	box-sizing: border-box;
 	padding: 10px;
-	min-height: 270px;
+	min-height: 415px;
 	height: 100%;	/* this is needed so the element won't grow verticaly when it's sibling do */
 	border: 1px solid;
 	margin-right: 10px;
