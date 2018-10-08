@@ -16,6 +16,13 @@ class PersonCompare extends Component {
 		commonMoviesCounter: 0
 	}
 
+	componentDidMount = () => {
+		if(this.props.match.params.ids){
+			const ids = this.props.match.params.ids.split('/');
+			ids.forEach(this.getPersonData);
+		}
+	}
+
 	searchChange = (e) => {
 		const searchValue = e.target.value;
 		if(searchValue.length>0){
@@ -36,42 +43,48 @@ class PersonCompare extends Component {
 	searchSelect = (e) => {
 		const person = this.state.autocompleteData.find(person => person.name===e.target.value);
 		if(person && person.id){
-			theMovieDB.get(`/person/${person.id}?append_to_response=combined_credits`)
-				.then(res =>{
-					const newPeople = this.state.people.slice();
-
-					const isActor = res.data.known_for_department ==='Acting';
-					const relevantCredits = res.data.combined_credits[isActor ? 'cast' : 'crew'];
-
-					const uniqueCredits = relevantCredits.reduce((unique, credit) => {
-						if(!unique.find(c => c.id===credit.id)){
-							unique.push(credit);
-						}
-						return unique;
-					}, []);
-
-					const sortedCredits = uniqueCredits.sort((a, b) => {
-						if(this.isCreditTalkShow(a)){	//move talkshows and documentaries at the end
-							return 1;
-						} else if(this.isCreditTalkShow(b)){
-							return -1;
-						} else {
-							return b.popularity - a.popularity;
-						}
-					});
-
-					res.data.credits = sortedCredits;
-
-					newPeople.push(res.data);
-					this.setState({ people: newPeople}, this.updateCommonCredits);
-
-					e.target.value = '';
-				})
-				.catch(err => {
-					this.setState({ error: err.response.statusText });
-					console.log( err.response.data['status_message'] );
-				});
+			this.getPersonData(person.id);
+			e.target.value = '';
 		}
+	}
+
+	getPersonData = (personId) => {
+		theMovieDB.get(`/person/${personId}?append_to_response=combined_credits`)
+			.then(res =>{
+				const newPeople = this.state.people.slice();
+
+				const isActor = res.data.known_for_department ==='Acting';
+				const relevantCredits = res.data.combined_credits[isActor ? 'cast' : 'crew'];
+
+				const uniqueCredits = relevantCredits.reduce((unique, credit) => {
+					if(!unique.find(c => c.id===credit.id)){
+						unique.push(credit);
+					}
+					return unique;
+				}, []);
+
+				const sortedCredits = uniqueCredits.sort((a, b) => {
+					if(this.isCreditTalkShow(a)){	//move talkshows and documentaries at the end
+						return 1;
+					} else if(this.isCreditTalkShow(b)){
+						return -1;
+					} else {
+						return b.popularity - a.popularity;
+					}
+				});
+
+				res.data.credits = sortedCredits;
+
+				newPeople.push(res.data);
+				this.setState({ people: newPeople}, () => {
+					this.updateCommonCredits();
+					this.updateUrl();
+				});
+			})
+			.catch(err => {
+				this.setState({ error: err.response.statusText });
+				console.log( err.response.data );
+			});
 	}
 
 	updateCommonCredits = () => {
@@ -120,8 +133,13 @@ class PersonCompare extends Component {
 		});
 	}
 
+	updateUrl = () => {
+		const ids = this.state.people.map(person => person.id);
+		this.props.history.push('/people/'+ids.join('/'));
+	}
+
 	//last part to match empty strings that are returned from the API
-	isCreditTalkShow = (credit) => /himself|herself|narrator|^$/i.test(credit.character);
+	isCreditTalkShow = (credit) => /himself|herself|narrator|^$/i.test(credit.character)
 
 	creditInCreditList = (credit, list) => {
 		for(const c of list){
@@ -136,7 +154,10 @@ class PersonCompare extends Component {
 	removePerson = (personIndex) => {
 		const newPeople = this.state.people.slice();
 		newPeople.splice(personIndex, 1);
-		this.setState({ people: newPeople }, this.updateCommonCredits);
+		this.setState({ people: newPeople }, () => {
+			this.updateCommonCredits();
+			this.updateUrl();
+		});
 	}
 
 	render () {
