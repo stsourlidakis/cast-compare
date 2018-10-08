@@ -11,7 +11,9 @@ class PersonCompare extends Component {
 		people: [],
 		autocompleteData: [],
 		autocompleteNames: [],
-		commonCredits: []
+		commonCredits: [],
+		commonShowsCounter: 0,
+		commonMoviesCounter: 0
 	}
 
 	searchChange = (e) => {
@@ -87,6 +89,8 @@ class PersonCompare extends Component {
 		const creditLists = this.state.people.map(p => p.credits).sort((a, b) => a.length>b.length);
 		const numberOfLists = creditLists.length;
 		let commonCredits = [];
+		let commonShowsCounter = 0;
+		let commonMoviesCounter = 0;
 		//	check if each credit in the first's person list are inside the other lists
 		creditLists[0].forEach(credit => {
 			let isCommon = true;
@@ -100,11 +104,19 @@ class PersonCompare extends Component {
 
 			if(isCommon){
 				commonCredits.push(credit);
+
+				if(credit.media_type==='tv'){
+					commonShowsCounter++;
+				} else {
+					commonMoviesCounter++;
+				}
 			}
 		});
 
 		this.setState({
-			commonCredits
+			commonCredits,
+			commonShowsCounter,
+			commonMoviesCounter
 		});
 	}
 
@@ -132,7 +144,14 @@ class PersonCompare extends Component {
 		let commonCredits = null;
 		if(this.state.people.length>1){
 			if(this.state.commonCredits.length>0){
-				helpText = "Common Movies and TV shows:";
+				if(this.state.commonMoviesCounter>0 && this.state.commonShowsCounter>0){
+					helpText = `Common Movies(${this.state.commonMoviesCounter}) and TV shows(${this.state.commonShowsCounter}):`;
+				} else if(this.state.commonMoviesCounter>0){
+					helpText = `Common Movies(${this.state.commonMoviesCounter}):`;
+				} else {
+					helpText = `Common TV shows(${this.state.commonShowsCounter}):`;
+				}
+				
 				commonCredits = <div className={styles.commonCreditsWrapper}>
 									<Credits credits={this.state.commonCredits} displayType="row" expanded />
 								</div>;
