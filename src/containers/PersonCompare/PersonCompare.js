@@ -48,9 +48,18 @@ class PersonCompare extends Component {
 						return unique;
 					}, []);
 
-					const sortedCredits = uniqueCredits.sort((a, b) => a.popularity < b.popularity);
+					const sortedCredits = uniqueCredits.sort((a, b) => {
+						if(this.isCreditTalkShow(a)){	//move talkshows and documentaries at the end
+							return 1;
+						} else if(this.isCreditTalkShow(b)){
+							return -1;
+						} else {
+							return b.popularity - a.popularity;
+						}
+					});
+
 					res.data.credits = sortedCredits;
-					
+
 					newPeople.push(res.data);
 					this.setState({ people: newPeople}, this.updateCommonCredits);
 
@@ -98,6 +107,9 @@ class PersonCompare extends Component {
 			commonCredits
 		});
 	}
+
+	//last part to match empty strings that are returned from the API
+	isCreditTalkShow = (credit) => /himself|narrator|^$/i.test(credit.character);
 
 	creditInCreditList = (credit, list) => {
 		for(const c of list){
