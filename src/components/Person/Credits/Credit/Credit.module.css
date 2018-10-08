@@ -1,0 +1,7 @@
+.Credit{
+	margin-right: 5px;
+}
+
+.Credit:hover{
+	transform: scale(.9);
+}

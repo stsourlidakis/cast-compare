@@ -1,9 +1,10 @@
 .Person{
+	background: rgba(33, 33, 33, .85);
+	color: #eee;
 	box-sizing: border-box;
 	padding: 10px;
 	min-height: 415px;
 	height: 100%;	/* this is needed so the element won't grow verticaly when it's sibling do */
-	border: 1px solid;
 	margin-right: 10px;
 	margin-bottom: 10px;
 	position: relative;	/* this is needed so the remove button can be positioned relative to this element https://stackoverflow.com/questions/10487292/position-absolute-but-relative-to-parent */

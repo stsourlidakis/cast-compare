@@ -6,7 +6,7 @@
 
 .PersonCompare{
 	box-sizing: border-box;
-	padding: 36px 2%;
+	padding: 36px 0;
 	height: 100%;
 }
 
@@ -21,11 +21,14 @@
 	margin-bottom: 5px;
 	padding: 3px;
 	border: 1px solid;
+
+	background: rgba(33, 33, 33, .85);
 }
 
 .helpText{
 	text-align: center;
 	font-size: 2em;
+	color: #212121;
 }
 
 @media screen and (max-width : 760px) {
