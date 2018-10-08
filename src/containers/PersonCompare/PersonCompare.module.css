@@ -26,8 +26,9 @@
 }
 
 .helpText{
+	font-family: 'Bangers', cursive;
 	text-align: center;
-	font-size: 2em;
+	font-size: 3em;
 	color: #212121;
 }
 
