@@ -2,6 +2,7 @@ import React from 'react';
 
 import styles from './PersonPreview.module.css';
 import missing from '../../../assets/images/missingPhoto.svg';
+import TmdbLink from '../../TmdbLink/TmdbLink';
 
 const imageSize = 'w45';	//"w45", "w185", "h632", "original"
 
@@ -34,10 +35,10 @@ const PersonPreview = (props) => {
 				{birthday}
 				<div className={styles.externalLinks}>
 					{imdbButton}
-					<a className="externalLink linkMovieDB"
-						href={`https://www.themoviedb.org/person/${props.person.id}`}
-						rel="noopener noreferrer"
-						target="_blank">TheMovieDB</a>
+					<TmdbLink
+						type='person'
+						id={props.person.id}
+						classes="externalLink linkMovieDB">TheMovieDB</TmdbLink>
 				</div>
 			</div>
 		</div>
