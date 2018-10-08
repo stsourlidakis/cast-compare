@@ -9,6 +9,10 @@ const imageReady = (e) => {
 	e.target.classList.remove(styles.loading);
 }
 
+const imageFailed = (e) => {
+	e.target.src = missing;
+}
+
 const Credit = (props) => {
 	const title = props.data.media_type==='tv' ? props.data.name : props.data.title;
 	const released = props.data.release_date ? `(${props.data.release_date})` : '';
@@ -17,6 +21,7 @@ const Credit = (props) => {
 		<TmdbLink type={props.data.media_type} id={props.data.id} >
 				<img
 					onLoad={imageReady}
+					onError={imageFailed}
 					className={`${styles.Credit} ${styles.loading}`}
 					src={imgSrc}
 					alt={title}
