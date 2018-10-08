@@ -109,7 +109,7 @@ class PersonCompare extends Component {
 	}
 
 	//last part to match empty strings that are returned from the API
-	isCreditTalkShow = (credit) => /himself|narrator|^$/i.test(credit.character);
+	isCreditTalkShow = (credit) => /himself|herself|narrator|^$/i.test(credit.character);
 
 	creditInCreditList = (credit, list) => {
 		for(const c of list){
