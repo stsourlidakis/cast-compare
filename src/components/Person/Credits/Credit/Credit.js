@@ -4,6 +4,10 @@ import missing from '../../../../assets/images/missingPoster.png';
 import styles from './Credit.module.css';
 import TmdbLink from '../../../TmdbLink/TmdbLink';
 
+//the image is hidden initially so the alt text won't stretch the container while loading
+const imageReady = (e) => {
+	e.target.classList.remove(styles.loading);
+}
 
 const Credit = (props) => {
 	const title = props.data.media_type==='tv' ? props.data.name : props.data.title;
@@ -12,7 +16,8 @@ const Credit = (props) => {
 	return (
 		<TmdbLink type={props.data.media_type} id={props.data.id} >
 				<img
-					className={styles.Credit}
+					onLoad={imageReady}
+					className={`${styles.Credit} ${styles.loading}`}
 					src={imgSrc}
 					alt={title}
 					title={`${title} ${released}`} />

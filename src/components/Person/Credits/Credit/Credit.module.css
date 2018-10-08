@@ -5,3 +5,7 @@
 .Credit:hover{
 	transform: scale(.9);
 }
+
+.loading{
+	display: none;
+}
