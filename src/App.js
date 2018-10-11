@@ -3,6 +3,7 @@ import { BrowserRouter, Switch, Route } from 'react-router-dom';
 
 import './App.css';
 import PersonCompare from './containers/PersonCompare/PersonCompare'
+import Footer from './components/UI/Footer/Footer'
 
 class App extends Component {
 	render() {
@@ -13,6 +14,7 @@ class App extends Component {
 						<Route path="/people/:ids+" component={PersonCompare} />
 						<Route path="*" component={PersonCompare} />
 					</Switch>
+					<Footer />
 				</div>
 			</BrowserRouter>
 		);
