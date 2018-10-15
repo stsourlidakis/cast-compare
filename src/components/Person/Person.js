@@ -11,7 +11,7 @@ const Person = (props) => {
 			<Card>
 				<PersonPreview person={props.data} remove={props.remove}/>
 			</Card>
-			<Credits credits={props.data.credits} personId={props.data.id} />
+			<Credits credits={props.data.credits} />
 		</div>
 	);
 };
