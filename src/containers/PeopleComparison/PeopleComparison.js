@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import { personAutocomplete, theMovieDB } from '../../axios';
 
-import styles from './PersonCompare.module.css';
+import styles from './PeopleComparison.module.css';
 import Autocomplete from '../../components/UI/Autocomplete/Autocomplete';
 import ComparedItem from '../../components/ComparedItem/ComparedItem';
 import Credits from '../../components/ComparedItem/Credits/Credits';
 
-class PersonCompare extends Component {
+class PeopleComparison extends Component {
 	state = {
 		people: [],
 		autocompleteData: [],
@@ -209,7 +209,7 @@ class PersonCompare extends Component {
 			}
 		}
 		return (
-			<div className={styles.PersonCompare}>
+			<div className={styles.PeopleComparison}>
 				<div className={styles.autocompleteWrapper}>
 					<Autocomplete
 						matches={this.state.autocompleteNames}
@@ -232,4 +232,4 @@ class PersonCompare extends Component {
 	}
 }
 
-export default PersonCompare;
+export default PeopleComparison;
