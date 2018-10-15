@@ -7,6 +7,15 @@ import TmdbLink from '../../TmdbLink/TmdbLink';
 const imageSize = 'w45';	//"w45", "w185", "h632", "original"
 
 const ComparedItemPreview = (props) => {
+	let name = props.person.name;
+	let nameClass = name.length>17 ? styles.nameSmall : styles.name;
+	if(name.length>17){
+		nameClass = styles.nameSmall;
+		if(name.length>29){
+			name = name.slice(0, 27)+'..';
+		}
+	}
+
 	let imageSrc = missing;
 	if(props.person.imagePath){
 		imageSrc = `https://image.tmdb.org/t/p/${imageSize}${props.person.imagePath}`;
@@ -32,7 +41,7 @@ const ComparedItemPreview = (props) => {
 			<img src={imageSrc} alt={props.person.name} width="45" height="auto" />
 			<div className={styles.info}>
 				<button className={styles.remove} onClick={props.remove}>X</button>
-				<div className={styles.name}>{props.person.name}</div>
+				<div className={nameClass} title={props.person.name}>{name}</div>
 				{date}
 				<div className={styles.externalLinks}>
 					{imdbButton}

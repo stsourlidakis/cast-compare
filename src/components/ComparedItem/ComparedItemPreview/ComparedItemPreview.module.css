@@ -11,6 +11,10 @@
 	font-size: 1.5em;
 }
 
+.nameSmall{
+	font-weight: bold;
+}
+
 .date{
 	margin-bottom: 3px;
 }
