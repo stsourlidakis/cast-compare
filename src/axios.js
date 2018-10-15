@@ -1,7 +1,9 @@
 import axios from 'axios';
 
+const autoCompleteBaseUrl = process.env.NODE_ENV==='production' ? process.env.REACT_APP_AUTOCOMPLETE_URL : 'http://localhost:3001';
+
 const personAutocomplete = axios.create({
-	baseURL: process.env.NODE_ENV==='production' ? process.env.REACT_APP_AUTOCOMPLETE_URL : 'http://localhost:3001'
+	baseURL: `${autoCompleteBaseUrl}/person`
 });
 
 const theMovieDB = axios.create({
