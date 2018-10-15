@@ -52,30 +52,9 @@ class PersonCompare extends Component {
 		theMovieDB.get(`/person/${personId}?append_to_response=combined_credits`)
 			.then(res =>{
 				const newPeople = this.state.people.slice();
+				const newPerson = this.createNewPerson(res.data);
+				newPeople.push(newPerson);
 
-				const isActor = res.data.known_for_department ==='Acting';
-				const relevantCredits = res.data.combined_credits[isActor ? 'cast' : 'crew'];
-
-				const uniqueCredits = relevantCredits.reduce((unique, credit) => {
-					if(!unique.find(c => c.id===credit.id)){
-						unique.push(credit);
-					}
-					return unique;
-				}, []);
-
-				const sortedCredits = uniqueCredits.sort((a, b) => {
-					if(this.isCreditTalkShow(a)){	//move talkshows and documentaries at the end
-						return 1;
-					} else if(this.isCreditTalkShow(b)){
-						return -1;
-					} else {
-						return b.popularity - a.popularity;
-					}
-				});
-
-				res.data.credits = sortedCredits;
-
-				newPeople.push(res.data);
 				this.setState({ people: newPeople}, () => {
 					this.updateCommonCredits();
 					this.updateUrl();
@@ -86,6 +65,51 @@ class PersonCompare extends Component {
 				console.log( err.response.data );
 			});
 	}
+
+	createNewPerson = (person) => {
+		const personData = this.extractPersonData(person);
+		const credits = this.extractCredits(person);
+		return {
+			...personData,
+			credits
+		}
+	}
+
+	extractPersonData = (person) => ({
+		type: 'person',
+		imagePath: person.profile_path,
+		imdbId: person.imdb_id,
+		dateTitle: 'Born',
+		date: person.birthday,
+		name: person.name,
+		id: person.id
+	})
+
+	extractCredits = (person) => {
+		const isActor = person.known_for_department ==='Acting';
+		const relevantCredits = person.combined_credits[isActor ? 'cast' : 'crew'];
+
+		const uniqueCredits = relevantCredits.reduce((unique, credit) => {
+			if(!unique.find(c => c.id===credit.id)){
+				unique.push(credit);
+			}
+			return unique;
+		}, []);
+
+		const sortedCredits = uniqueCredits.sort((a, b) => {
+			if(this.isCreditTalkShow(a)){	//move talkshows and documentaries at the end
+				return 1;
+			} else if(this.isCreditTalkShow(b)){
+				return -1;
+			} else {
+				return b.popularity - a.popularity;
+			}
+		});
+
+		return sortedCredits;
+	}
+
+
 
 	updateCommonCredits = () => {
 		if(this.state.people.length<2){

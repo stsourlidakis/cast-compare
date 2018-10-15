@@ -8,22 +8,23 @@ const imageSize = 'w45';	//"w45", "w185", "h632", "original"
 
 const PersonPreview = (props) => {
 	let imageSrc = missing;
-	if(props.person.profile_path){
-		imageSrc = `https://image.tmdb.org/t/p/${imageSize}${props.person.profile_path}`;
+	if(props.person.imagePath){
+		imageSrc = `https://image.tmdb.org/t/p/${imageSize}${props.person.imagePath}`;
 	}
 
 	let imdbButton = null;
-	if(props.person.imdb_id){
+	if(props.person.imdbId){
+		const imdbType = props.person.type==='person' ? 'name' :'title';
 		imdbButton = <a
 			className="externalLink linkImdb"
-			href={`https://www.imdb.com/name/${props.person.imdb_id}`}
+			href={`https://www.imdb.com/${imdbType}/${props.person.imdbId}`}
 			rel="noopener noreferrer"
 			target="_blank">IMDb</a>;
 	}
 
-	let birthday = null;
-	if(props.person.birthday){
-		birthday = <div className={styles.birthday}>Born: {props.person.birthday}</div>;
+	let date = null;
+	if(props.person.date){
+		date = <div className={styles.date}>{props.person.dateTitle}: {props.person.date}</div>;
 	}
 
 	return (
@@ -32,11 +33,11 @@ const PersonPreview = (props) => {
 			<div className={styles.info}>
 				<button className={styles.remove} onClick={props.remove}>X</button>
 				<div className={styles.name}>{props.person.name}</div>
-				{birthday}
+				{date}
 				<div className={styles.externalLinks}>
 					{imdbButton}
 					<TmdbLink
-						type='person'
+						type={props.person.type}
 						id={props.person.id}
 						classes="externalLink linkMovieDB">TheMovieDB</TmdbLink>
 				</div>
