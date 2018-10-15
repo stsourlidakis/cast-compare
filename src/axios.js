@@ -6,6 +6,10 @@ const personAutocomplete = axios.create({
 	baseURL: `${autoCompleteBaseUrl}/person`
 });
 
+const movieAutocomplete = axios.create({
+	baseURL: `${autoCompleteBaseUrl}/movie`
+});
+
 const theMovieDB = axios.create({
 	baseURL: 'https://api.themoviedb.org/3',
 	params: {
@@ -13,4 +17,4 @@ const theMovieDB = axios.create({
 	}
 });
 
-export { personAutocomplete, theMovieDB };
+export { personAutocomplete, movieAutocomplete, theMovieDB };

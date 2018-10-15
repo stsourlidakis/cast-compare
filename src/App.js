@@ -3,6 +3,7 @@ import { BrowserRouter, Switch, Route } from 'react-router-dom';
 
 import './App.css';
 import PeopleComparison from './containers/PeopleComparison/PeopleComparison'
+import MoviesComparison from './containers/MoviesComparison/MoviesComparison'
 import Footer from './components/UI/Footer/Footer'
 
 class App extends Component {
@@ -11,8 +12,9 @@ class App extends Component {
 			<BrowserRouter>
 				<div className="App">
 					<Switch>
-						<Route path="/people/:ids+" component={PeopleComparison} />
-						<Route path="*" component={PeopleComparison} />
+						<Route path="/movies/:ids*" component={MoviesComparison} />
+						<Route path="/people/:ids*" component={PeopleComparison} />
+						<Route path="*" component={MoviesComparison} />
 					</Switch>
 					<Footer />
 				</div>
