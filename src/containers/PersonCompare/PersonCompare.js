@@ -106,10 +106,14 @@ class PersonCompare extends Component {
 			}
 		});
 
-		return sortedCredits;
+		return sortedCredits.map(credit => ({
+			id: credit.id,
+			type: credit.media_type,
+			title: credit.media_type==='tv' ? credit.name : credit.title,
+			subtitle: credit.release_date ? `(${credit.release_date})` : '',
+			imagePath: credit.poster_path
+		}));
 	}
-
-
 
 	updateCommonCredits = () => {
 		if(this.state.people.length<2){

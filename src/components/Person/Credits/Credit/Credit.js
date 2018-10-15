@@ -14,18 +14,16 @@ const imageFailed = (e) => {
 }
 
 const Credit = (props) => {
-	const title = props.data.media_type==='tv' ? props.data.name : props.data.title;
-	const released = props.data.release_date ? `(${props.data.release_date})` : '';
-	const imgSrc = props.data.poster_path ? `https://image.tmdb.org/t/p/w92/${props.data.poster_path}` : missing;
+	const imgSrc = props.data.imagePath ? `https://image.tmdb.org/t/p/w92/${props.data.imagePath}` : missing;
 	return (
-		<TmdbLink type={props.data.media_type} id={props.data.id} >
+		<TmdbLink type={props.data.type} id={props.data.id} >
 				<img
 					onLoad={imageReady}
 					onError={imageFailed}
 					className={`${styles.Credit} ${styles.loading}`}
 					src={imgSrc}
-					alt={title}
-					title={`${title} ${released}`} />
+					alt={props.data.title}
+					title={`${props.data.title} ${props.data.subtitle}`} />
 		</TmdbLink>
 	);
 };
