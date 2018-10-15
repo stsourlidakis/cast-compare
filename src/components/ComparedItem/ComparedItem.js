@@ -9,7 +9,7 @@ const ComparedItem = (props) => {
 	return (
 		<div className={styles.ComparedItem}>
 			<Card>
-				<ComparedItemPreview person={props.data} remove={props.remove}/>
+				<ComparedItemPreview data={props.data} remove={props.remove}/>
 			</Card>
 			<Credits credits={props.data.credits} />
 		</div>
