@@ -1,12 +1,12 @@
 import React from 'react';
 
-import styles from './PersonPreview.module.css';
+import styles from './ComparedItemPreview.module.css';
 import missing from '../../../assets/images/missingPhoto.svg';
 import TmdbLink from '../../TmdbLink/TmdbLink';
 
 const imageSize = 'w45';	//"w45", "w185", "h632", "original"
 
-const PersonPreview = (props) => {
+const ComparedItemPreview = (props) => {
 	let imageSrc = missing;
 	if(props.person.imagePath){
 		imageSrc = `https://image.tmdb.org/t/p/${imageSize}${props.person.imagePath}`;
@@ -28,7 +28,7 @@ const PersonPreview = (props) => {
 	}
 
 	return (
-		<div className={styles.PersonPreview}>
+		<div className={styles.ComparedItemPreview}>
 			<img src={imageSrc} alt={props.person.name} width="45" height="auto" />
 			<div className={styles.info}>
 				<button className={styles.remove} onClick={props.remove}>X</button>
@@ -46,4 +46,4 @@ const PersonPreview = (props) => {
 	);
 };
 
-export default PersonPreview;
+export default ComparedItemPreview;

@@ -3,8 +3,8 @@ import { personAutocomplete, theMovieDB } from '../../axios';
 
 import styles from './PersonCompare.module.css';
 import Autocomplete from '../../components/UI/Autocomplete/Autocomplete';
-import Person from '../../components/Person/Person';
-import Credits from '../../components/Person/Credits/Credits';
+import ComparedItem from '../../components/ComparedItem/ComparedItem';
+import Credits from '../../components/ComparedItem/Credits/Credits';
 
 class PersonCompare extends Component {
 	state = {
@@ -221,7 +221,7 @@ class PersonCompare extends Component {
 				{commonCredits}
 				<div className={styles.People}>
 					{this.state.people.map((person, i) =>
-						<Person
+						<ComparedItem
 							key={i}
 							data={person}
 							remove={() => this.removePerson(i)} />
