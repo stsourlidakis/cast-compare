@@ -19,6 +19,9 @@ class MoviesComparison extends Component {
 			const ids = this.props.match.params.ids.split('/');
 			ids.forEach(this.getMovieData);
 		}
+		const bodyEl = document.querySelector('body');
+		bodyEl.className = '';
+		bodyEl.classList.add('movies');
 	}
 
 	searchChange = (e) => {
@@ -183,6 +186,7 @@ class MoviesComparison extends Component {
 						matches={this.state.autocompleteNames}
 						change={this.searchChange}
 						select={this.searchSelect}
+						placeholder="Start typing a title.."
 						focused={true} />
 				</div>
 				<div className={styles.helpText}>{helpText}</div>

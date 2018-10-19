@@ -38,7 +38,7 @@ class Autocomplete extends Component {
 			<div className={styles.Autocomplete}>
 				<input
 					type="text"
-					placeholder="Start typing a name.."
+					placeholder={this.props.placeholder || "Start typing a name.."}
 					ref={this.inputRef}
 					onChange={this.props.change} />
 			</div>
