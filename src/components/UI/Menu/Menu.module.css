@@ -1,0 +1,17 @@
+.Menu{
+	margin-top: 10px;
+	text-align: center;
+}
+
+.link{
+	padding: 7px;
+	background: rgba(33, 33, 33, .85);
+	font-family: 'Bangers', cursive;
+	font-size: 1.5em;
+	color: #eee;
+	text-decoration: none;
+}
+
+.link + .link{
+	margin-left: 5px;
+}

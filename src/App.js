@@ -2,15 +2,17 @@ import React, { Component } from 'react';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 
 import './App.css';
-import PeopleComparison from './containers/PeopleComparison/PeopleComparison'
-import MoviesComparison from './containers/MoviesComparison/MoviesComparison'
-import Footer from './components/UI/Footer/Footer'
+import PeopleComparison from './containers/PeopleComparison/PeopleComparison';
+import MoviesComparison from './containers/MoviesComparison/MoviesComparison';
+import Menu from './components/UI/Menu/Menu';
+import Footer from './components/UI/Footer/Footer';
 
 class App extends Component {
 	render() {
 		return (
 			<BrowserRouter>
 				<div className="App">
+					<Menu/>
 					<Switch>
 						<Route path="/movies/:ids*" component={MoviesComparison} />
 						<Route path="/people/:ids*" component={PeopleComparison} />
