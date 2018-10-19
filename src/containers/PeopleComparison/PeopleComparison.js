@@ -149,7 +149,7 @@ class PeopleComparison extends Component {
 			if(isCommon){
 				commonCredits.push(credit);
 
-				if(credit.media_type==='tv'){
+				if(credit.type==='tv'){
 					commonShowsCounter++;
 				} else {
 					commonMoviesCounter++;
