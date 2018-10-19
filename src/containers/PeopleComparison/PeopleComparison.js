@@ -21,6 +21,9 @@ class PeopleComparison extends Component {
 			const ids = this.props.match.params.ids.split('/');
 			ids.forEach(this.getPersonData);
 		}
+		const bodyEl = document.querySelector('body');
+		bodyEl.className = '';
+		bodyEl.classList.add('people');
 	}
 
 	searchChange = (e) => {
