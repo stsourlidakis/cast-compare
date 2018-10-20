@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import ReactGA from 'react-ga';
 import { personAutocomplete, theMovieDB } from '../../axios';
 
 import styles from './PeopleComparison.module.css';
@@ -24,6 +25,7 @@ class PeopleComparison extends Component {
 		const bodyEl = document.querySelector('body');
 		bodyEl.className = '';
 		bodyEl.classList.add('people');
+		ReactGA.pageview(this.props.match.url);
 	}
 
 	searchChange = (e) => {
@@ -48,6 +50,13 @@ class PeopleComparison extends Component {
 		if(person && person.id){
 			this.getPersonData(person.id);
 			e.target.value = '';
+
+			ReactGA.event({
+				category: 'Person',
+				action: 'add',
+				value: parseInt(person.id),
+				label: person.name
+			});
 		}
 	}
 
@@ -184,10 +193,17 @@ class PeopleComparison extends Component {
 
 	removePerson = (personIndex) => {
 		const newPeople = this.state.people.slice();
-		newPeople.splice(personIndex, 1);
+		const removedPerson = newPeople.splice(personIndex, 1);
 		this.setState({ people: newPeople }, () => {
 			this.updateCommonCredits();
 			this.updateUrl();
+		});
+
+		ReactGA.event({
+			category: 'Person',
+			action: 'remove',
+			value: parseInt(removedPerson[0].id),
+			label: removedPerson[0].name
 		});
 	}
 

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import ReactGA from 'react-ga';
 
 import styles from './Credits.module.css';
 import Credit from './Credit/Credit';
@@ -16,12 +17,22 @@ class Credits extends Component {
 			creditsLimit: this.props.credits.length,
 			creditsLimited: false
 		});
+
+		ReactGA.event({
+			category: 'Credits',
+			action: 'show'
+		});
 	}
 
 	showLess = () => {
 		this.setState({
 			creditsLimit: this.DEFAULT_CREDITS_LIMIT,
 			creditsLimited: true
+		});
+
+		ReactGA.event({
+			category: 'Credits',
+			action: 'hide'
 		});
 	}
 

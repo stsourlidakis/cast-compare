@@ -1,11 +1,14 @@
 import React, { Component } from 'react';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
+import ReactGA from 'react-ga';
 
 import './App.css';
 import PeopleComparison from './containers/PeopleComparison/PeopleComparison';
 import MoviesComparison from './containers/MoviesComparison/MoviesComparison';
 import Menu from './components/UI/Menu/Menu';
 import Footer from './components/UI/Footer/Footer';
+
+ReactGA.initialize(process.env.REACT_APP_GA_ID);
 
 class App extends Component {
 	render() {

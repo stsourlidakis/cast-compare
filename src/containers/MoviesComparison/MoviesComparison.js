@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import ReactGA from 'react-ga';
 import { movieAutocomplete, theMovieDB } from '../../axios';
 
 import styles from './MoviesComparison.module.css';
@@ -22,6 +23,7 @@ class MoviesComparison extends Component {
 		const bodyEl = document.querySelector('body');
 		bodyEl.className = '';
 		bodyEl.classList.add('movies');
+		ReactGA.pageview(this.props.match.url);
 	}
 
 	searchChange = (e) => {
@@ -46,6 +48,13 @@ class MoviesComparison extends Component {
 		if(movie && movie.id){
 			this.getMovieData(movie.id);
 			e.target.value = '';
+
+			ReactGA.event({
+				category: 'Movie',
+				action: 'add',
+				value: parseInt(movie.id),
+				label: movie.name
+			});
 		}
 	}
 
@@ -158,10 +167,17 @@ class MoviesComparison extends Component {
 
 	removeMovie = (movieIndex) => {
 		const newMovies = this.state.movies.slice();
-		newMovies.splice(movieIndex, 1);
+		const removedMovie = newMovies.splice(movieIndex, 1);
 		this.setState({ movies: newMovies }, () => {
 			this.updateCommonCredits();
 			this.updateUrl();
+		});
+
+		ReactGA.event({
+			category: 'Movie',
+			action: 'remove',
+			value: parseInt(removedMovie[0].id),
+			label: removedMovie[0].name
 		});
 	}
 
