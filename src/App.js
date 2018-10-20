@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { BrowserRouter, Switch, Route } from 'react-router-dom';
+import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
 import ReactGA from 'react-ga';
 
 import './App.css';
@@ -18,8 +18,9 @@ class App extends Component {
 					<Menu/>
 					<Switch>
 						<Route path="/movies/:ids*" component={MoviesComparison} />
+						<Route path="/" exact component={MoviesComparison} />
 						<Route path="/people/:ids*" component={PeopleComparison} />
-						<Route path="*" component={MoviesComparison} />
+						<Redirect from="*" to="/" />
 					</Switch>
 					<Footer />
 				</div>
