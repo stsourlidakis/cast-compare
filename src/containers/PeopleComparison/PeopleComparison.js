@@ -208,7 +208,8 @@ class PeopleComparison extends Component {
 	}
 
 	render () {
-		let helpText = "Select two or more people";
+		let helpText = <>Select two or more <span className={styles.highlighted}>People</span></>;
+
 		let commonCredits = null;
 		if(this.state.people.length>1){
 			if(this.state.commonCredits.length>0){

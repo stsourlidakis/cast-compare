@@ -30,6 +30,11 @@
 	font-family: 'Bangers', cursive;
 	text-align: center;
 	font-size: 3em;
+	text-shadow: 3px 3px #0e2a0e;
+}
+
+.highlighted{
+	text-decoration: underline;
 }
 
 @media screen and (max-width : 760px) {

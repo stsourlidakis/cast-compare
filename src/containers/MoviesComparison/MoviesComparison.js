@@ -182,7 +182,7 @@ class MoviesComparison extends Component {
 	}
 
 	render () {
-		let helpText = "Select two or more Movies";
+		let helpText = <>Select two or more <span className={styles.highlighted}>Movies</span></>;
 		let commonCredits = null;
 		if(this.state.movies.length>1){
 			if(this.state.commonCredits.length>0){
