@@ -23,7 +23,8 @@ const ComparedItemPreview = (props) => {
 
 	let imdbButton = null;
 	if(props.data.imdbId){
-		const imdbType = props.data.type==='data' ? 'name' :'title';
+		console.log(props.data.type);
+		const imdbType = props.data.type==='person' ? 'name' : 'title';
 		imdbButton = <a
 			className="externalLink linkImdb"
 			href={`https://www.imdb.com/${imdbType}/${props.data.imdbId}`}
