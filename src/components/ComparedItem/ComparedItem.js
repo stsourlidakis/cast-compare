@@ -6,12 +6,15 @@ import ComparedItemPreview from './ComparedItemPreview/ComparedItemPreview';
 import Credits from './Credits/Credits';
 
 const ComparedItem = (props) => {
+	const preview = props.loading
+						? <div className={styles.loader}>Loading...</div>
+						: <ComparedItemPreview data={props.data} remove={props.remove}/>;
 	return (
 		<div className={styles.ComparedItem}>
-			<Card>
-				<ComparedItemPreview data={props.data} remove={props.remove}/>
+			<Card noBorder={props.loading}>
+				{preview}
 			</Card>
-			<Credits credits={props.data.credits} />
+			{props.loading ? null : <Credits credits={props.data.credits} />}
 		</div>
 	);
 };

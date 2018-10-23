@@ -10,6 +10,7 @@ import Credits from '../../components/ComparedItem/Credits/Credits';
 class PeopleComparison extends Component {
 	state = {
 		people: [],
+		pendingPeople: [],
 		autocompleteData: [],
 		autocompleteNames: [],
 		commonCredits: [],
@@ -61,18 +62,24 @@ class PeopleComparison extends Component {
 	}
 
 	getPersonData = (personId) => {
+		this.addPendingPerson(personId);
+
 		theMovieDB.get(`/person/${personId}?append_to_response=combined_credits`)
 			.then(res =>{
 				const newPeople = this.state.people.slice();
 				const newPerson = this.createNewPerson(res.data);
 				newPeople.push(newPerson);
 
-				this.setState({ people: newPeople}, () => {
+				this.removePendingPerson(personId);
+
+				this.setState({ people: newPeople }, () => {
 					this.updateCommonCredits();
 					this.updateUrl();
 				});
 			})
 			.catch(err => {
+				this.removePendingPerson(personId);
+
 				this.setState({ error: err.response.statusText });
 				console.log( err.response.data );
 			});
@@ -125,6 +132,18 @@ class PeopleComparison extends Component {
 			subtitle: credit.release_date ? `(${credit.release_date})` : '',
 			imagePath: credit.poster_path
 		}));
+	}
+
+	addPendingPerson = (personId) => {		
+		const newPendingPeople = this.state.pendingPeople.slice();
+		newPendingPeople.push({id: personId});
+		this.setState({pendingPeople: newPendingPeople});
+	}
+
+	removePendingPerson = (personId) => {
+		const newPendingPeople = this.state.pendingPeople.slice()
+									.filter(person => person.id!==personId);
+		this.setState({pendingPeople: newPendingPeople});
 	}
 
 	updateCommonCredits = () => {
@@ -245,6 +264,11 @@ class PeopleComparison extends Component {
 							key={i}
 							data={person}
 							remove={() => this.removePerson(i)} />
+					)}
+					{this.state.pendingPeople.map(person =>
+						<ComparedItem
+							key={person.id}
+							loading />
 					)}
 				</div>
 			</div>

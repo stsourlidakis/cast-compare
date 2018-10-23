@@ -10,6 +10,7 @@ import Credits from '../../components/ComparedItem/Credits/Credits';
 class MoviesComparison extends Component {
 	state = {
 		movies: [],
+		pendingMovies: [],
 		autocompleteData: [],
 		autocompleteNames: [],
 		commonCredits: []
@@ -59,17 +60,24 @@ class MoviesComparison extends Component {
 	}
 
 	getMovieData = (movieId) => {
+		this.addPendingMovie(movieId);
+		
 		theMovieDB.get(`/movie/${movieId}?append_to_response=credits`)
 			.then(res =>{
 				const newMovies = this.state.movies.slice();
 				const newMovie = this.createNewMovie(res.data);
 				newMovies.push(newMovie);
-				this.setState({ movies: newMovies}, () => {
+
+				this.removePendingMovie(movieId);
+
+				this.setState({ movies: newMovies }, () => {
 					this.updateCommonCredits();
 					this.updateUrl();
 				});
 			})
 			.catch(err => {
+				this.removePendingMovie(movieId);
+
 				this.setState({ error: err.response.statusText });
 				console.log( err.response.data );
 			});
@@ -109,6 +117,18 @@ class MoviesComparison extends Component {
 			subtitle: person.character ? `(${person.character})` : `(${person.job})`,
 			imagePath: person.profile_path
 		}));
+	}
+
+	addPendingMovie = (movieId) => {
+		const newPendingMovies = this.state.pendingMovies.slice();
+		newPendingMovies.push({id: movieId});
+		this.setState({pendingMovies: newPendingMovies});
+	}
+
+	removePendingMovie = (movieId) => {
+		const newPendingMovies = this.state.pendingMovies.slice()
+								.filter(movie => movie.id!==movieId);
+		this.setState({pendingMovies: newPendingMovies});
 	}
 
 	updateCommonCredits = () => {
@@ -213,6 +233,10 @@ class MoviesComparison extends Component {
 							key={i}
 							data={movie}
 							remove={() => this.removeMovie(i)} />
+					)}
+					{this.state.pendingMovies.map(movie =>
+						<ComparedItem
+							key={movie.id}loading />
 					)}
 				</div>
 			</div>
