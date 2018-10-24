@@ -19,6 +19,8 @@ class PeopleComparison extends Component {
 	}
 
 	componentDidMount = () => {
+		this._isMounted = true;
+
 		if(this.props.match.params.ids){
 			const ids = this.props.match.params.ids.split('/');
 			ids.forEach(this.getPersonData);
@@ -29,17 +31,25 @@ class PeopleComparison extends Component {
 		ReactGA.pageview(this.props.match.url);
 	}
 
+	componentWillUnmount = () => {
+		this._isMounted = false;
+	}
+
 	searchChange = (e) => {
 		const searchValue = e.target.value;
 		if(searchValue.length>0){
 			personAutocomplete.get(`/?name=${searchValue}`)
 				.then(res =>{
+					if(!this._isMounted)return;
+
 					this.setState({
 						autocompleteData: res.data,
 						autocompleteNames: res.data.map(match => match.name)
 					});
 				})
 				.catch(err => {
+					if(!this._isMounted)return;
+
 					this.setState({ error: err.response.statusText });
 					console.log( err.response.data.error );
 				});
@@ -66,6 +76,8 @@ class PeopleComparison extends Component {
 
 		theMovieDB.get(`/person/${personId}?append_to_response=combined_credits`)
 			.then(res =>{
+				if(!this._isMounted)return;
+
 				const newPeople = this.state.people.slice();
 				const newPerson = this.createNewPerson(res.data);
 				newPeople.push(newPerson);
@@ -78,6 +90,8 @@ class PeopleComparison extends Component {
 				});
 			})
 			.catch(err => {
+				if(!this._isMounted)return;
+
 				this.removePendingPerson(personId);
 
 				this.setState({ error: err.response.statusText });
