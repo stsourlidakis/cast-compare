@@ -1,42 +1,42 @@
-.ComparedItemPreview{
-	display: flex;
+.ComparedItemPreview {
+  display: flex;
 }
 
-.info{
-	margin-left: 5px;
+.info {
+  margin-left: 5px;
 }
 
-.name{
-	font-weight: bold;
-	font-size: 1.5em;
+.name {
+  font-weight: bold;
+  font-size: 1.5em;
 }
 
-.nameSmall{
-	font-weight: bold;
+.nameSmall {
+  font-weight: bold;
 }
 
-.date{
-	margin-bottom: 3px;
+.date {
+  margin-bottom: 3px;
 }
 
-.remove{
-	position: absolute;	/* absolute to the first "position: relative" parent, in this case Person */
-	top: 0;
-	right: 0;
+.remove {
+  position: absolute; /* absolute to the first "position: relative" parent, in this case Person */
+  top: 0;
+  right: 0;
 
-	cursor: pointer;
-	padding: 7px;
-	border: 1px solid #d43f3a;
-	border-bottom-left-radius: 20px;
-	font-weight: bold;
-	background: #d9534f;
-	color: #fff;
+  cursor: pointer;
+  padding: 7px;
+  border: 1px solid #d43f3a;
+  border-bottom-left-radius: 20px;
+  font-weight: bold;
+  background: #d9534f;
+  color: #fff;
 }
 
-.remove:hover{
-	background: #db6360;
+.remove:hover {
+  background: #db6360;
 }
 
-.remove:active{
-	background: #d9534f;
+.remove:active {
+  background: #d9534f;
 }

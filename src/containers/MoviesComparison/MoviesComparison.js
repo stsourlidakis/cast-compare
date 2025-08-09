@@ -1,279 +1,293 @@
-import React, { Component } from 'react';
-import { flushSync } from 'react-dom';
-import ReactGA from 'react-ga4';
-import { useParams, useNavigate, useLocation } from 'react-router-dom';
-import { movieAutocomplete, theMovieDB } from '../../axios';
+import React, { Component } from "react";
+import { flushSync } from "react-dom";
+import ReactGA from "react-ga4";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
+import { movieAutocomplete, theMovieDB } from "../../axios";
 
-import styles from './MoviesComparison.module.css';
-import Autocomplete from '../../components/UI/Autocomplete/Autocomplete';
-import ComparedItem from '../../components/ComparedItem/ComparedItem';
-import Credits from '../../components/ComparedItem/Credits/Credits';
+import styles from "./MoviesComparison.module.css";
+import Autocomplete from "../../components/UI/Autocomplete/Autocomplete";
+import ComparedItem from "../../components/ComparedItem/ComparedItem";
+import Credits from "../../components/ComparedItem/Credits/Credits";
 
 class MoviesComparison extends Component {
-	state = {
-		movies: [],
-		pendingMovies: [],
-		autocompleteData: [],
-		autocompleteNames: [],
-		commonCredits: []
-	}
+  state = {
+    movies: [],
+    pendingMovies: [],
+    autocompleteData: [],
+    autocompleteNames: [],
+    commonCredits: [],
+  };
 
-	componentDidMount = () => {
-		this._isMounted = true;
-		if(this.props.params.ids){
-			const ids = this.props.params.ids.split(',');
-			ids.forEach(this.getMovieData);
-		}
-		const bodyEl = document.querySelector('body');
-		bodyEl.className = '';
-		bodyEl.classList.add('movies');
-		ReactGA.send({ hitType: "pageview", page: this.props.location.pathname});
-	}
+  componentDidMount = () => {
+    this._isMounted = true;
+    if (this.props.params.ids) {
+      const ids = this.props.params.ids.split(",");
+      ids.forEach(this.getMovieData);
+    }
+    const bodyEl = document.querySelector("body");
+    bodyEl.className = "";
+    bodyEl.classList.add("movies");
+    ReactGA.send({ hitType: "pageview", page: this.props.location.pathname });
+  };
 
-	componentWillUnmount = () => {
-		this._isMounted = false;
-	}
+  componentWillUnmount = () => {
+    this._isMounted = false;
+  };
 
-	searchChange = (e) => {
-		const searchValue = e.target.value;
-		if(searchValue.length>0){
-			movieAutocomplete.get(`/?name=${searchValue}`)
-				.then(res =>{
-					if(!this._isMounted)return;
+  searchChange = (e) => {
+    const searchValue = e.target.value;
+    if (searchValue.length > 0) {
+      movieAutocomplete
+        .get(`/?name=${searchValue}`)
+        .then((res) => {
+          if (!this._isMounted) return;
 
-					this.setState({
-						autocompleteData: res.data,
-						autocompleteNames: res.data.map(match => match.name)
-					});
-				})
-				.catch(err => {
-					if(!this._isMounted)return;
+          this.setState({
+            autocompleteData: res.data,
+            autocompleteNames: res.data.map((match) => match.name),
+          });
+        })
+        .catch((err) => {
+          if (!this._isMounted) return;
 
-					this.setState({ error: err.response.statusText });
-					console.log( err.response.data.error );
-				});
-		}
-	}
+          this.setState({ error: err.response.statusText });
+          console.log(err.response.data.error);
+        });
+    }
+  };
 
-	searchSelect = (e) => {
-		const movie = this.state.autocompleteData.find(movie => movie.name===e.target.value);
-		if(movie && movie.id){
-			this.getMovieData(movie.id);
-			e.target.value = '';
+  searchSelect = (e) => {
+    const movie = this.state.autocompleteData.find(
+      (movie) => movie.name === e.target.value
+    );
+    if (movie && movie.id) {
+      this.getMovieData(movie.id);
+      e.target.value = "";
 
-			ReactGA.event({
-				category: 'Movie',
-				action: 'add',
-				value: parseInt(movie.id),
-				label: movie.name
-			});
-		}
-	}
+      ReactGA.event({
+        category: "Movie",
+        action: "add",
+        value: parseInt(movie.id),
+        label: movie.name,
+      });
+    }
+  };
 
-	getMovieData = (movieId) => {
-		this.addPendingMovie(movieId);
-		
-		theMovieDB.get(`/movie/${movieId}?append_to_response=credits`)
-			.then(res =>{
-				if(!this._isMounted)return;
+  getMovieData = (movieId) => {
+    this.addPendingMovie(movieId);
 
-				flushSync(() => {
-					const newMovies = this.state.movies.slice();
-					const newMovie = this.createNewMovie(res.data);
-					newMovies.push(newMovie);
+    theMovieDB
+      .get(`/movie/${movieId}?append_to_response=credits`)
+      .then((res) => {
+        if (!this._isMounted) return;
 
-					this.removePendingMovie(movieId);
+        flushSync(() => {
+          const newMovies = this.state.movies.slice();
+          const newMovie = this.createNewMovie(res.data);
+          newMovies.push(newMovie);
 
-					this.setState({ movies: newMovies }, () => {
-						this.updateCommonCredits();
-						this.updateUrl();
-					});
-				});
-			})
-			.catch(err => {
-				if(!this._isMounted)return;
+          this.removePendingMovie(movieId);
 
-				this.removePendingMovie(movieId);
+          this.setState({ movies: newMovies }, () => {
+            this.updateCommonCredits();
+            this.updateUrl();
+          });
+        });
+      })
+      .catch((err) => {
+        if (!this._isMounted) return;
 
-				this.setState({ error: err.response.statusText });
-				console.log( err.response.data );
-			});
-	}
+        this.removePendingMovie(movieId);
 
-	createNewMovie = (movie) => {
-		const movieData = this.extractMovieData(movie);
-		const credits = this.extractCredits(movie);
-		return {
-			...movieData,
-			credits
-		}
-	}
+        this.setState({ error: err.response.statusText });
+        console.log(err.response.data);
+      });
+  };
 
-	extractMovieData = (movie) => ({
-		type: 'movie',
-		imagePath: movie.poster_path,
-		imdbId: movie.imdb_id,
-		dateTitle: 'Released',
-		date: movie.release_date,
-		name: movie.original_title,
-		id: movie.id
-	})
+  createNewMovie = (movie) => {
+    const movieData = this.extractMovieData(movie);
+    const credits = this.extractCredits(movie);
+    return {
+      ...movieData,
+      credits,
+    };
+  };
 
-	extractCredits = (movie) => {
-		const uniqueCredits = movie.credits.cast.reduce((unique, credit) => {
-			if(!unique.find(c => c.id===credit.id)){
-				unique.push(credit);
-			}
-			return unique;
-		}, []);
+  extractMovieData = (movie) => ({
+    type: "movie",
+    imagePath: movie.poster_path,
+    imdbId: movie.imdb_id,
+    dateTitle: "Released",
+    date: movie.release_date,
+    name: movie.original_title,
+    id: movie.id,
+  });
 
-		return uniqueCredits.map(person => ({
-			id: person.id,
-			type: 'person',
-			title: person.name,
-			subtitle: person.character ? `(${person.character})` : `(${person.job})`,
-			imagePath: person.profile_path
-		}));
-	}
+  extractCredits = (movie) => {
+    const uniqueCredits = movie.credits.cast.reduce((unique, credit) => {
+      if (!unique.find((c) => c.id === credit.id)) {
+        unique.push(credit);
+      }
+      return unique;
+    }, []);
 
-	addPendingMovie = (movieId) => {
-		const newPendingMovies = this.state.pendingMovies.slice();
-		newPendingMovies.push({id: movieId});
-		this.setState({pendingMovies: newPendingMovies});
-	}
+    return uniqueCredits.map((person) => ({
+      id: person.id,
+      type: "person",
+      title: person.name,
+      subtitle: person.character ? `(${person.character})` : `(${person.job})`,
+      imagePath: person.profile_path,
+    }));
+  };
 
-	removePendingMovie = (movieId) => {
-		const newPendingMovies = this.state.pendingMovies.slice()
-								.filter(movie => movie.id!==movieId);
-		this.setState({pendingMovies: newPendingMovies});
-	}
+  addPendingMovie = (movieId) => {
+    const newPendingMovies = this.state.pendingMovies.slice();
+    newPendingMovies.push({ id: movieId });
+    this.setState({ pendingMovies: newPendingMovies });
+  };
 
-	updateCommonCredits = () => {
-		if(this.state.movies.length<2){
-			this.setState({
-				commonCredits: []
-			});
-			return;
-		}
+  removePendingMovie = (movieId) => {
+    const newPendingMovies = this.state.pendingMovies
+      .slice()
+      .filter((movie) => movie.id !== movieId);
+    this.setState({ pendingMovies: newPendingMovies });
+  };
 
-		//	In order to find the common credits we will check if the credits from
-		//	the movie with the least of them are present in every person's credit list
+  updateCommonCredits = () => {
+    if (this.state.movies.length < 2) {
+      this.setState({
+        commonCredits: [],
+      });
+      return;
+    }
 
-		//	get only the credit lists and sort them in asc order so the first one has the least number of credits
-		const creditLists = this.state.movies.map(p => p.credits).sort((a, b) => a.length>b.length);
-		const numberOfLists = creditLists.length;
-		let commonCredits = [];
-		//	check if each credit in the first's movie list are inside the other lists
-		creditLists[0].forEach(credit => {
-			let isCommon = true;
+    //	In order to find the common credits we will check if the credits from
+    //	the movie with the least of them are present in every person's credit list
 
-			for(let i=1; i<numberOfLists; i++){
-				if(!this.creditInCreditList(credit, creditLists[i])){
-					isCommon = false;
-					break;
-				}
-			}
+    //	get only the credit lists and sort them in asc order so the first one has the least number of credits
+    const creditLists = this.state.movies
+      .map((p) => p.credits)
+      .sort((a, b) => a.length > b.length);
+    const numberOfLists = creditLists.length;
+    let commonCredits = [];
+    //	check if each credit in the first's movie list are inside the other lists
+    creditLists[0].forEach((credit) => {
+      let isCommon = true;
 
-			if(isCommon){
-				commonCredits.push({
-					...credit,
-					subtitle: ''
-				});
-			}
-		});
+      for (let i = 1; i < numberOfLists; i++) {
+        if (!this.creditInCreditList(credit, creditLists[i])) {
+          isCommon = false;
+          break;
+        }
+      }
 
-		this.setState({
-			commonCredits
-		});
-	}
+      if (isCommon) {
+        commonCredits.push({
+          ...credit,
+          subtitle: "",
+        });
+      }
+    });
 
-	updateUrl = () => {
-		const ids = this.state.movies.map(movie => movie.id);
-		this.props.navigate('/movies/'+ids.join(','), { replace: true });
-	}
+    this.setState({
+      commonCredits,
+    });
+  };
 
-	creditInCreditList = (credit, list) => {
-		for(const c of list){
-			if (c.id === credit.id){
-				return true;
-			}
-		}
+  updateUrl = () => {
+    const ids = this.state.movies.map((movie) => movie.id);
+    this.props.navigate("/movies/" + ids.join(","), { replace: true });
+  };
 
-		return false;
-	}
+  creditInCreditList = (credit, list) => {
+    for (const c of list) {
+      if (c.id === credit.id) {
+        return true;
+      }
+    }
 
-	removeMovie = (movieIndex) => {
-		const newMovies = this.state.movies.slice();
-		const removedMovie = newMovies.splice(movieIndex, 1);
-		this.setState({ movies: newMovies }, () => {
-			this.updateCommonCredits();
-			this.updateUrl();
-		});
+    return false;
+  };
 
-		ReactGA.event({
-			category: 'Movie',
-			action: 'remove',
-			value: parseInt(removedMovie[0].id),
-			label: removedMovie[0].name
-		});
-	}
+  removeMovie = (movieIndex) => {
+    const newMovies = this.state.movies.slice();
+    const removedMovie = newMovies.splice(movieIndex, 1);
+    this.setState({ movies: newMovies }, () => {
+      this.updateCommonCredits();
+      this.updateUrl();
+    });
 
-	render () {
-		let helpText = <>Select two or more <span className={styles.highlighted}>Movies</span></>;
-		let commonCredits = null;
-		if(this.state.movies.length>1){
-			if(this.state.commonCredits.length>0){
-				helpText = `Common Actors(${this.state.commonCredits.length}):`;
-				
-				commonCredits = <div className={styles.commonCreditsWrapper}>
-									<Credits credits={this.state.commonCredits} displayType="row" expanded />
-								</div>;
-			} else {
-				helpText = "No common Actors found";
-			}
-		}
-		return (
-			<div className={styles.MoviesComparison}>
-				<div className={styles.autocompleteWrapper}>
-					<Autocomplete
-						matches={this.state.autocompleteNames}
-						change={this.searchChange}
-						select={this.searchSelect}
-						placeholder="Start typing a title.."
-						focused={true} />
-				</div>
-				<div className={styles.helpText}>{helpText}</div>
-				{commonCredits}
-				<div className={styles.Movies}>
-					{this.state.movies.map((movie, i) =>
-						<ComparedItem
-							key={i}
-							data={movie}
-							remove={() => this.removeMovie(i)} />
-					)}
-					{this.state.pendingMovies.map(movie =>
-						<ComparedItem
-							key={movie.id}loading />
-					)}
-				</div>
-			</div>
-		);
-	}
+    ReactGA.event({
+      category: "Movie",
+      action: "remove",
+      value: parseInt(removedMovie[0].id),
+      label: removedMovie[0].name,
+    });
+  };
+
+  render() {
+    let helpText = (
+      <>
+        Select two or more <span className={styles.highlighted}>Movies</span>
+      </>
+    );
+    let commonCredits = null;
+    if (this.state.movies.length > 1) {
+      if (this.state.commonCredits.length > 0) {
+        helpText = `Common Actors(${this.state.commonCredits.length}):`;
+
+        commonCredits = (
+          <div className={styles.commonCreditsWrapper}>
+            <Credits
+              credits={this.state.commonCredits}
+              displayType="row"
+              expanded
+            />
+          </div>
+        );
+      } else {
+        helpText = "No common Actors found";
+      }
+    }
+    return (
+      <div className={styles.MoviesComparison}>
+        <div className={styles.autocompleteWrapper}>
+          <Autocomplete
+            matches={this.state.autocompleteNames}
+            change={this.searchChange}
+            select={this.searchSelect}
+            placeholder="Start typing a title.."
+            focused={true}
+          />
+        </div>
+        <div className={styles.helpText}>{helpText}</div>
+        {commonCredits}
+        <div className={styles.Movies}>
+          {this.state.movies.map((movie, i) => (
+            <ComparedItem
+              key={i}
+              data={movie}
+              remove={() => this.removeMovie(i)}
+            />
+          ))}
+          {this.state.pendingMovies.map((movie) => (
+            <ComparedItem key={movie.id} loading />
+          ))}
+        </div>
+      </div>
+    );
+  }
 }
 
 // Wrapper to provide React Router v6 hooks to class component
 const MoviesComparisonWrapper = () => {
-	const params = useParams();
-	const navigate = useNavigate();
-	const location = useLocation();
-	
-	return (
-		<MoviesComparison 
-			params={params} 
-			navigate={navigate} 
-			location={location} 
-		/>
-	);
+  const params = useParams();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  return (
+    <MoviesComparison params={params} navigate={navigate} location={location} />
+  );
 };
 
 export default MoviesComparisonWrapper;

@@ -1,11 +1,11 @@
-.Footer{
-	flex-shrink: 0;
-	padding: 3px;
-	background: rgba(33, 33, 33, .45);
-	color: #eee;
-	text-align: center;
+.Footer {
+  flex-shrink: 0;
+  padding: 3px;
+  background: rgba(33, 33, 33, 0.45);
+  color: #eee;
+  text-align: center;
 }
 
 .Footer a {
-	color: inherit;
+  color: inherit;
 }

@@ -1,11 +1,11 @@
-.Credit{
-	margin-right: 5px;
+.Credit {
+  margin-right: 5px;
 }
 
-.Credit:hover{
-	transform: scale(.9);
+.Credit:hover {
+  transform: scale(0.9);
 }
 
-.loading{
-	display: none;
+.loading {
+  display: none;
 }

@@ -1,10 +1,10 @@
-.Card{
-	box-sizing: border-box;
-	padding: 5px 10px;
-	min-width: 250px;
-	border: 1px solid;
+.Card {
+  box-sizing: border-box;
+  padding: 5px 10px;
+  min-width: 250px;
+  border: 1px solid;
 }
 
-.noBorder{
-	border: 0;
+.noBorder {
+  border: 0;
 }

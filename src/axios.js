@@ -1,20 +1,23 @@
-import axios from 'axios';
+import axios from "axios";
 
-const autoCompleteBaseUrl = process.env.NODE_ENV==='production' ? process.env.REACT_APP_AUTOCOMPLETE_URL : 'http://localhost:3001';
+const autoCompleteBaseUrl =
+  process.env.NODE_ENV === "production"
+    ? process.env.REACT_APP_AUTOCOMPLETE_URL
+    : "http://localhost:3001";
 
 const personAutocomplete = axios.create({
-	baseURL: `${autoCompleteBaseUrl}/person`
+  baseURL: `${autoCompleteBaseUrl}/person`,
 });
 
 const movieAutocomplete = axios.create({
-	baseURL: `${autoCompleteBaseUrl}/movie`
+  baseURL: `${autoCompleteBaseUrl}/movie`,
 });
 
 const theMovieDB = axios.create({
-	baseURL: 'https://api.themoviedb.org/3',
-	params: {
-		'api_key': process.env.REACT_APP_THEMOVIEDB_API_KEY
-	}
+  baseURL: "https://api.themoviedb.org/3",
+  params: {
+    api_key: process.env.REACT_APP_THEMOVIEDB_API_KEY,
+  },
 });
 
 export { personAutocomplete, movieAutocomplete, theMovieDB };

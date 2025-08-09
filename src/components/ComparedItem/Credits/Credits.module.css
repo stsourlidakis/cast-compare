@@ -1,17 +1,17 @@
 .grid {
-	margin-top: 5px;
-	display: grid;
-	grid-gap: 3px;
-	grid-template-columns: 1fr 1fr 1fr;
+  margin-top: 5px;
+  display: grid;
+  grid-gap: 3px;
+  grid-template-columns: 1fr 1fr 1fr;
 }
 
 .row {
-	display: flex;
-	overflow-x: auto;
+  display: flex;
+  overflow-x: auto;
 }
 
-.row .buttonWrapper{
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
+.row .buttonWrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
