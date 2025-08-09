@@ -1,12 +1,13 @@
 import React from 'react';
-import { Link, withRouter } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 import styles from './Menu.module.css';
  
-const Menu = (props) => {
+const Menu = () => {
+	const location = useLocation();
 	const pages = ['movies', 'people'];
 	const defaultPage = 'movies';
-	let activePage = props.location.pathname.split('/')[1];
+	let activePage = location.pathname.split('/')[1];
 	if(activePage===''){	//in case of /
 		activePage=defaultPage;
 	}
@@ -23,4 +24,4 @@ const Menu = (props) => {
 	);
 };
 
-export default withRouter(Menu);
+export default Menu;

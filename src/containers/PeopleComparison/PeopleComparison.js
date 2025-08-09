@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
-import ReactGA from 'react-ga';
+import { flushSync } from 'react-dom';
+import ReactGA from 'react-ga4';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { personAutocomplete, theMovieDB } from '../../axios';
 
 import styles from './PeopleComparison.module.css';
@@ -21,14 +23,14 @@ class PeopleComparison extends Component {
 	componentDidMount = () => {
 		this._isMounted = true;
 
-		if(this.props.match.params.ids){
-			const ids = this.props.match.params.ids.split('/');
+		if(this.props.params.ids){
+			const ids = this.props.params.ids.split(',');
 			ids.forEach(this.getPersonData);
 		}
 		const bodyEl = document.querySelector('body');
 		bodyEl.className = '';
 		bodyEl.classList.add('people');
-		ReactGA.pageview(this.props.match.url);
+		ReactGA.send({ hitType: "pageview", page: this.props.location.pathname});
 	}
 
 	componentWillUnmount = () => {
@@ -78,15 +80,17 @@ class PeopleComparison extends Component {
 			.then(res =>{
 				if(!this._isMounted)return;
 
-				const newPeople = this.state.people.slice();
-				const newPerson = this.createNewPerson(res.data);
-				newPeople.push(newPerson);
+				flushSync(() => {
+					const newPeople = this.state.people.slice();
+					const newPerson = this.createNewPerson(res.data);
+					newPeople.push(newPerson);
 
-				this.removePendingPerson(personId);
+					this.removePendingPerson(personId);
 
-				this.setState({ people: newPeople }, () => {
-					this.updateCommonCredits();
-					this.updateUrl();
+					this.setState({ people: newPeople }, () => {
+						this.updateCommonCredits();
+						this.updateUrl();
+					});
 				});
 			})
 			.catch(err => {
@@ -208,7 +212,7 @@ class PeopleComparison extends Component {
 
 	updateUrl = () => {
 		const ids = this.state.people.map(person => person.id);
-		this.props.history.push('/people/'+ids.join('/'));
+		this.props.navigate('/people/'+ids.join(','));
 	}
 
 	//last part to match empty strings that are returned from the API
@@ -290,4 +294,19 @@ class PeopleComparison extends Component {
 	}
 }
 
-export default PeopleComparison;
+// Wrapper to provide React Router v6 hooks to class component
+const PeopleComparisonWrapper = () => {
+	const params = useParams();
+	const navigate = useNavigate();
+	const location = useLocation();
+	
+	return (
+		<PeopleComparison 
+			params={params} 
+			navigate={navigate} 
+			location={location} 
+		/>
+	);
+};
+
+export default PeopleComparisonWrapper;

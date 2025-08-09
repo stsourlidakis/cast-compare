@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import ReactGA from 'react-ga';
+import ReactGA from 'react-ga4';
 
 import styles from './Credits.module.css';
 import Credit from './Credit/Credit';

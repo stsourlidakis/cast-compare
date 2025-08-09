@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
-import ReactGA from 'react-ga';
+import { flushSync } from 'react-dom';
+import ReactGA from 'react-ga4';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { movieAutocomplete, theMovieDB } from '../../axios';
 
 import styles from './MoviesComparison.module.css';
@@ -18,15 +20,14 @@ class MoviesComparison extends Component {
 
 	componentDidMount = () => {
 		this._isMounted = true;
-
-		if(this.props.match.params.ids){
-			const ids = this.props.match.params.ids.split('/');
+		if(this.props.params.ids){
+			const ids = this.props.params.ids.split(',');
 			ids.forEach(this.getMovieData);
 		}
 		const bodyEl = document.querySelector('body');
 		bodyEl.className = '';
 		bodyEl.classList.add('movies');
-		ReactGA.pageview(this.props.match.url);
+		ReactGA.send({ hitType: "pageview", page: this.props.location.pathname});
 	}
 
 	componentWillUnmount = () => {
@@ -76,15 +77,17 @@ class MoviesComparison extends Component {
 			.then(res =>{
 				if(!this._isMounted)return;
 
-				const newMovies = this.state.movies.slice();
-				const newMovie = this.createNewMovie(res.data);
-				newMovies.push(newMovie);
+				flushSync(() => {
+					const newMovies = this.state.movies.slice();
+					const newMovie = this.createNewMovie(res.data);
+					newMovies.push(newMovie);
 
-				this.removePendingMovie(movieId);
+					this.removePendingMovie(movieId);
 
-				this.setState({ movies: newMovies }, () => {
-					this.updateCommonCredits();
-					this.updateUrl();
+					this.setState({ movies: newMovies }, () => {
+						this.updateCommonCredits();
+						this.updateUrl();
+					});
 				});
 			})
 			.catch(err => {
@@ -186,7 +189,7 @@ class MoviesComparison extends Component {
 
 	updateUrl = () => {
 		const ids = this.state.movies.map(movie => movie.id);
-		this.props.history.push('/movies/'+ids.join('/'));
+		this.props.navigate('/movies/'+ids.join(','), { replace: true });
 	}
 
 	creditInCreditList = (credit, list) => {
@@ -258,4 +261,19 @@ class MoviesComparison extends Component {
 	}
 }
 
-export default MoviesComparison;
+// Wrapper to provide React Router v6 hooks to class component
+const MoviesComparisonWrapper = () => {
+	const params = useParams();
+	const navigate = useNavigate();
+	const location = useLocation();
+	
+	return (
+		<MoviesComparison 
+			params={params} 
+			navigate={navigate} 
+			location={location} 
+		/>
+	);
+};
+
+export default MoviesComparisonWrapper;

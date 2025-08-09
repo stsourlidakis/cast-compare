@@ -27,9 +27,9 @@ class Autocomplete extends Component {
 		this.inputRef.current.removeEventListener('awesomplete-selectcomplete', this.props.select);
 	}
 
-	componentWillReceiveProps = (nextProps) => {
-		if(nextProps.matches!==this.props.matches){
-			this.awesompleteInstance.list = nextProps.matches;
+	componentDidUpdate = (prevProps) => {
+		if(this.props.matches !== prevProps.matches){
+			this.awesompleteInstance.list = this.props.matches;
 		}
 	}
 
