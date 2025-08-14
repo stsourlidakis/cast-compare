@@ -1,70 +1,57 @@
-import React, { Component } from "react";
+import { useState, useCallback } from "react";
 import ReactGA from "react-ga4";
 
 import styles from "./Credits.module.css";
 import Credit from "./Credit/Credit";
 
-class Credits extends Component {
-  DEFAULT_CREDITS_LIMIT = 6;
+const DEFAULT_CREDITS_LIMIT = 6;
+function Credits({ fullListVisible, credits, displayType }) {
+  const [creditsLimited, setCreditsLimited] = useState(!fullListVisible);
+  const [creditsLimit, setCreditsLimit] = useState(DEFAULT_CREDITS_LIMIT);
 
-  state = {
-    creditsLimited: !this.props.expanded,
-    creditsLimit: this.DEFAULT_CREDITS_LIMIT,
-  };
-
-  showMore = () => {
-    this.setState({
-      creditsLimit: this.props.credits.length,
-      creditsLimited: false,
-    });
+  const showMore = useCallback(() => {
+    setCreditsLimit(credits.length);
+    setCreditsLimited(false);
 
     ReactGA.event({
       category: "Credits",
       action: "show",
     });
-  };
+  }, [credits.length]);
 
-  showLess = () => {
-    this.setState({
-      creditsLimit: this.DEFAULT_CREDITS_LIMIT,
-      creditsLimited: true,
-    });
+  const showLess = useCallback(() => {
+    setCreditsLimit(DEFAULT_CREDITS_LIMIT);
+    setCreditsLimited(true);
 
     ReactGA.event({
       category: "Credits",
       action: "hide",
     });
-  };
+  }, []);
 
-  render() {
-    let toggleLimitButton = null;
-    if (!this.props.expanded) {
-      if (!this.state.creditsLimited) {
-        toggleLimitButton = <button onClick={this.showLess}>Less..</button>;
-      } else if (this.props.credits.length > this.state.creditsLimit) {
-        toggleLimitButton = <button onClick={this.showMore}>More..</button>;
-      }
+  let toggleLimitButton = null;
+  if (!fullListVisible) {
+    if (!creditsLimited) {
+      toggleLimitButton = <button onClick={showLess}>Less..</button>;
+    } else if (credits.length > creditsLimit) {
+      toggleLimitButton = <button onClick={showMore}>More..</button>;
     }
-
-    const credits = this.props.expanded
-      ? this.props.credits
-      : this.props.credits.slice(0, this.state.creditsLimit);
-
-    return (
-      <>
-        <div
-          className={
-            this.props.displayType === "row" ? styles.row : styles.grid
-          }
-        >
-          {credits.map((c, i) => (
-            <Credit data={c} key={i} />
-          ))}
-        </div>
-        <div className={styles.buttonWrapper}>{toggleLimitButton}</div>
-      </>
-    );
   }
+
+  const displayedCredits = fullListVisible
+    ? credits
+    : credits.slice(0, creditsLimit);
+
+  return (
+    <>
+      <div className={displayType === "row" ? styles.row : styles.grid}>
+        {displayedCredits.map((c) => (
+          <Credit data={c} key={c.id} />
+        ))}
+      </div>
+      <div className={styles.buttonWrapper}>{toggleLimitButton}</div>
+    </>
+  );
 }
 
 export default Credits;

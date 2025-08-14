@@ -7,7 +7,6 @@ const moviesConfig = {
   theme: "movies",
   gaCategory: "Movie",
   urlPath: "movies",
-  urlReplaceOption: true,
   placeholder: "Start typing a title..",
   autocompleteApi: movieAutocomplete,
   dataApi: theMovieDB,
@@ -57,8 +56,8 @@ const moviesConfig = {
     </>
   ),
 
-  getCommonCreditsHelpText: (state) =>
-    `Common Actors(${state.commonCredits.length}):`,
+  getCommonCreditsHelpText: (metrics) =>
+    `Common Actors(${metrics.commonCredits.length}):`,
 
   noCommonCreditsText: "No common Actors found",
 };

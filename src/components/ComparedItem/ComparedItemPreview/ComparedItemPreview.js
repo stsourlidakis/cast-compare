@@ -1,5 +1,3 @@
-import React from "react";
-
 import styles from "./ComparedItemPreview.module.css";
 import missing from "../../../assets/images/missingPhoto.svg";
 import TmdbLink from "../../TmdbLink/TmdbLink";

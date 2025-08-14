@@ -1,59 +1,79 @@
-import React, { Component } from "react";
+import { useRef, useEffect, memo, useState, useCallback } from "react";
 import awesomplete from "awesomplete";
 import "awesomplete/awesomplete.css";
 
 import styles from "./Autocomplete.module.css";
 
-class Autocomplete extends Component {
-  awesompleteInstance = null;
-  inputRef = React.createRef();
-  awesompleteOptions = {
-    autoFirst: true,
-    sort: false, //items are already sorted by number of votes on imdb
-    minChars: 1,
-    filter: () => true, //no need to filter them, they are all matches
-  };
+const awesompleteOptions = {
+  autoFirst: true,
+  sort: false, //items are already sorted by number of votes on imdb
+  minChars: 1,
+  filter: () => true, //no need to filter them, they are all matches
+};
 
-  componentDidMount = () => {
-    this.awesompleteInstance = new awesomplete(
-      this.inputRef.current,
-      this.awesompleteOptions
-    );
-    this.inputRef.current.addEventListener(
-      "awesomplete-selectcomplete",
-      this.props.select
+const Autocomplete = memo(function Autocomplete({
+  onSearch,
+  onSelect,
+  placeholder,
+  focused,
+}) {
+  const [matches, setMatches] = useState([]);
+  const awesompleteInstanceRef = useRef(null);
+  const inputRef = useRef(null);
+
+  const handleSearch = useCallback(
+    async (e) => {
+      const searchValue = e.target.value;
+
+      if (searchValue.length > 0) {
+        try {
+          const results = await onSearch(searchValue);
+          setMatches(results || []);
+        } catch (err) {
+          console.error("Search error:", err);
+          setMatches([]);
+        }
+      } else {
+        setMatches([]);
+      }
+    },
+    [onSearch]
+  );
+
+  useEffect(() => {
+    awesompleteInstanceRef.current = new awesomplete(
+      inputRef.current,
+      awesompleteOptions
     );
 
-    if (this.props.focused) {
-      this.inputRef.current.focus();
+    const input = inputRef.current;
+    input.addEventListener("awesomplete-selectcomplete", onSelect);
+
+    if (focused) {
+      input.focus();
     }
-  };
 
-  componentWillUnmount = () => {
-    this.inputRef.current.removeEventListener(
-      "awesomplete-selectcomplete",
-      this.props.select
-    );
-  };
+    return () => {
+      input?.removeEventListener("awesomplete-selectcomplete", onSelect);
+    };
+  }, [onSelect, focused]);
 
-  componentDidUpdate = (prevProps) => {
-    if (this.props.matches !== prevProps.matches) {
-      this.awesompleteInstance.list = this.props.matches;
+  useEffect(() => {
+    if (awesompleteInstanceRef.current && matches) {
+      awesompleteInstanceRef.current.list = matches;
     }
-  };
+  }, [matches]);
 
-  render() {
-    return (
-      <div className={styles.Autocomplete}>
-        <input
-          type="text"
-          placeholder={this.props.placeholder || "Start typing a name.."}
-          ref={this.inputRef}
-          onChange={this.props.change}
-        />
-      </div>
-    );
-  }
-}
+  return (
+    <div className={styles.Autocomplete}>
+      <input
+        type="text"
+        placeholder={placeholder || "Start typing a name.."}
+        ref={inputRef}
+        onChange={handleSearch}
+      />
+    </div>
+  );
+});
 
 export default Autocomplete;

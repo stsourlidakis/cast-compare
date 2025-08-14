@@ -1,4 +1,3 @@
-import React from "react";
 import { Link, useLocation } from "react-router-dom";
 
 import styles from "./Menu.module.css";
@@ -18,10 +17,7 @@ const Menu = () => {
       {pages.map((page) => (
         <Link
           to={`/${page}`}
-          className={[
-            styles.link,
-            page === activePage ? styles.active : null,
-          ].join(" ")}
+          className={`${styles.link} ${page === activePage ? styles.active : ""}`}
           key={page}
         >{`Compare ${page}`}</Link>
       ))}

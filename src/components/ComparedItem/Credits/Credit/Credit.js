@@ -1,5 +1,3 @@
-import React from "react";
-
 import missing from "../../../../assets/images/missingPoster.png";
 import styles from "./Credit.module.css";
 import TmdbLink from "../../../TmdbLink/TmdbLink";

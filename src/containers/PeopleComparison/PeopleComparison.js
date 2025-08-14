@@ -11,11 +11,6 @@ const peopleConfig = {
   autocompleteApi: personAutocomplete,
   dataApi: theMovieDB,
 
-  extraStateFields: {
-    commonShowsCounter: 0,
-    commonMoviesCounter: 0,
-  },
-
   getApiUrl: (personId) =>
     `/person/${personId}?append_to_response=combined_credits`,
 
@@ -67,28 +62,10 @@ const peopleConfig = {
     };
   },
 
-  initExtraCounters: () => ({
-    commonShowsCounter: 0,
-    commonMoviesCounter: 0,
-  }),
-
-  resetExtraCounters: () => ({
-    commonShowsCounter: 0,
-    commonMoviesCounter: 0,
-  }),
-
-  updateExtraCounters: (credit, counters) => {
-    if (credit.type === "tv") {
-      return {
-        ...counters,
-        commonShowsCounter: counters.commonShowsCounter + 1,
-      };
-    } else {
-      return {
-        ...counters,
-        commonMoviesCounter: counters.commonMoviesCounter + 1,
-      };
-    }
+  getMetrics: (commonCredits) => {
+    const movieCount = commonCredits.filter((c) => c.type !== "tv").length;
+    const tvCount = commonCredits.filter((c) => c.type === "tv").length;
+    return { commonMoviesCounter: movieCount, commonShowsCounter: tvCount };
   },
 
   getInitialHelpText: () => (
@@ -97,13 +74,13 @@ const peopleConfig = {
     </>
   ),
 
-  getCommonCreditsHelpText: (state) => {
-    if (state.commonMoviesCounter > 0 && state.commonShowsCounter > 0) {
-      return `Common Movies(${state.commonMoviesCounter}) and TV shows(${state.commonShowsCounter}):`;
-    } else if (state.commonMoviesCounter > 0) {
-      return `Common Movies(${state.commonMoviesCounter}):`;
+  getCommonCreditsHelpText: (metrics) => {
+    if (metrics.commonMoviesCounter > 0 && metrics.commonShowsCounter > 0) {
+      return `Common Movies(${metrics.commonMoviesCounter}) and TV shows(${metrics.commonShowsCounter}):`;
+    } else if (metrics.commonMoviesCounter > 0) {
+      return `Common Movies(${metrics.commonMoviesCounter}):`;
     } else {
-      return `Common TV shows(${state.commonShowsCounter}):`;
+      return `Common TV shows(${metrics.commonShowsCounter}):`;
     }
   },
 

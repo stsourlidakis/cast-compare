@@ -1,5 +1,3 @@
-import React from "react";
-
 import styles from "./ComparedItem.module.css";
 import Card from "../UI/Card/Card";
 import ComparedItemPreview from "./ComparedItemPreview/ComparedItemPreview";

@@ -1,286 +1,243 @@
-import React, { Component } from "react";
-import { flushSync } from "react-dom";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import ReactGA from "react-ga4";
-import { useParams, useNavigate, useLocation } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 
 import styles from "./GenericComparison.module.css";
 import Autocomplete from "../../components/UI/Autocomplete/Autocomplete";
 import ComparedItem from "../../components/ComparedItem/ComparedItem";
 import Credits from "../../components/ComparedItem/Credits/Credits";
 
-class GenericComparison extends Component {
-  constructor(props) {
-    super(props);
-    const { config } = props;
-    this.state = {
-      items: [],
-      pendingItems: [],
-      autocompleteData: [],
-      autocompleteNames: [],
-      commonCredits: [],
-      ...(config.extraStateFields || {}),
-    };
+const creditInCreditList = (credit, list) => {
+  return list.some((c) => c.id === credit.id);
+};
+
+const calculateCommonCredits = (items, config) => {
+  if (items.length < 2) {
+    return [];
   }
 
-  componentDidMount = () => {
-    this._isMounted = true;
-    const { config } = this.props;
+  const creditLists = items
+    .map((item) => item.credits)
+    .sort((a, b) => a.length > b.length);
+  const numberOfLists = creditLists.length;
+  const commonCredits = [];
 
-    if (this.props.params.ids) {
-      const ids = this.props.params.ids.split(",");
-      ids.forEach(this.getItemData);
+  creditLists[0].forEach((credit) => {
+    let isCommon = true;
+
+    for (let i = 1; i < numberOfLists; i++) {
+      if (!creditInCreditList(credit, creditLists[i])) {
+        isCommon = false;
+        break;
+      }
     }
 
-    const bodyEl = document.querySelector("body");
+    if (isCommon) {
+      const processedCredit = config.processCommonCredit
+        ? config.processCommonCredit(credit)
+        : credit;
+      commonCredits.push(processedCredit);
+    }
+  });
+
+  return commonCredits;
+};
+
+const GenericComparison = ({ config }) => {
+  const [items, setItems] = useState([]);
+  const [pendingItems, setPendingItems] = useState([]);
+  const [commonCredits, setCommonCredits] = useState([]);
+
+  const abortControllerRef = useRef(null);
+  const params = useParams();
+  const location = useLocation();
+
+  // Store search results to access item data
+  const searchResultsRef = useRef([]);
+
+  // Search function to be passed to Autocomplete
+  const handleSearch = useCallback(
+    async (searchValue) => {
+      try {
+        const res = await config.autocompleteApi.get(`/?name=${searchValue}`, {
+          signal: abortControllerRef.current?.signal,
+        });
+        searchResultsRef.current = res.data;
+        return res.data.map((match) => match.name);
+      } catch (err) {
+        if (err.name === "AbortError") return [];
+        console.log(err.response?.data?.error || err.message);
+        searchResultsRef.current = [];
+        return [];
+      }
+    },
+    [config.autocompleteApi]
+  );
+
+  const addPendingItem = useCallback((itemId) => {
+    setPendingItems((prev) => [...prev, { id: itemId }]);
+  }, []);
+
+  const removePendingItem = useCallback((itemId) => {
+    setPendingItems((prev) => prev.filter((item) => item.id !== itemId));
+  }, []);
+
+  const updateCommonCredits = useCallback(() => {
+    const newCommonCredits = calculateCommonCredits(items, config);
+    setCommonCredits(newCommonCredits);
+  }, [items, config]);
+
+  const updateUrl = useCallback(() => {
+    const ids = items.map((item) => item.id);
+    const newUrl =
+      ids.length > 0
+        ? `/${config.urlPath}/${ids.join(",")}`
+        : `/${config.urlPath}`;
+
+    // Update URL without triggering navigation
+    window.history.replaceState(null, "", newUrl);
+  }, [items, config]);
+
+  const getItemData = useCallback(
+    async (itemId) => {
+      addPendingItem(itemId);
+
+      try {
+        const res = await config.dataApi.get(config.getApiUrl(itemId), {
+          signal: abortControllerRef.current?.signal,
+        });
+
+        const newItem = config.createNewItem(res.data);
+        removePendingItem(itemId);
+        setItems((prevItems) => [...prevItems, newItem]);
+      } catch (err) {
+        if (err.name === "AbortError") return;
+
+        removePendingItem(itemId);
+        console.log(err.response?.data || err.message);
+      }
+    },
+    [config, removePendingItem, addPendingItem]
+  );
+
+  useEffect(() => {
+    abortControllerRef.current = new AbortController();
+
+    return () => {
+      abortControllerRef.current?.abort();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (params.ids) {
+      const ids = params.ids.split(",");
+      ids.forEach(getItemData);
+    }
+
+    ReactGA.send({ hitType: "pageview", page: location.pathname });
+  }, [params.ids, location.pathname, getItemData]);
+
+  useEffect(() => {
+    const bodyEl = document.body;
+    const previousClasses = bodyEl.className;
+
     bodyEl.className = "";
     bodyEl.classList.add(config.bodyClass);
-    ReactGA.send({ hitType: "pageview", page: this.props.location.pathname });
-  };
 
-  componentWillUnmount = () => {
-    this._isMounted = false;
-  };
+    return () => {
+      bodyEl.className = previousClasses;
+    };
+  }, [config.bodyClass]);
 
-  searchChange = (e) => {
-    const { config } = this.props;
-    const searchValue = e.target.value;
+  useEffect(() => {
+    updateCommonCredits();
+    updateUrl();
+  }, [items, updateCommonCredits, updateUrl]);
 
-    if (searchValue.length > 0) {
-      config.autocompleteApi
-        .get(`/?name=${searchValue}`)
-        .then((res) => {
-          if (!this._isMounted) return;
+  const searchSelect = useCallback(
+    (e) => {
+      const item = searchResultsRef.current.find(
+        (item) => item.name === e.target.value
+      );
 
-          this.setState({
-            autocompleteData: res.data,
-            autocompleteNames: res.data.map((match) => match.name),
-          });
-        })
-        .catch((err) => {
-          if (!this._isMounted) return;
+      if (item && item.id) {
+        getItemData(item.id);
+        e.target.value = "";
 
-          this.setState({ error: err.response.statusText });
-          console.log(err.response.data.error);
+        ReactGA.event({
+          category: config.gaCategory,
+          action: "add",
+          value: parseInt(item.id),
+          label: item.name,
         });
-    }
-  };
+      }
+    },
+    [getItemData, config.gaCategory]
+  );
 
-  searchSelect = (e) => {
-    const { config } = this.props;
-    const item = this.state.autocompleteData.find(
-      (item) => item.name === e.target.value
-    );
+  const removeItem = useCallback(
+    (itemIndex) => {
+      const newItems = [...items];
+      const removedItem = newItems.splice(itemIndex, 1);
 
-    if (item && item.id) {
-      this.getItemData(item.id);
-      e.target.value = "";
+      setItems(newItems);
 
       ReactGA.event({
         category: config.gaCategory,
-        action: "add",
-        value: parseInt(item.id),
-        label: item.name,
+        action: "remove",
+        value: parseInt(removedItem[0].id),
+        label: removedItem[0].name,
       });
-    }
-  };
+    },
+    [items, config]
+  );
 
-  getItemData = (itemId) => {
-    const { config } = this.props;
-    this.addPendingItem(itemId);
+  let helpText = config.getInitialHelpText();
+  let commonCreditsElement = null;
 
-    config.dataApi
-      .get(config.getApiUrl(itemId))
-      .then((res) => {
-        if (!this._isMounted) return;
+  if (items.length > 1) {
+    if (commonCredits.length > 0) {
+      const metrics = config.getMetrics
+        ? config.getMetrics(commonCredits)
+        : { commonCredits };
+      helpText = config.getCommonCreditsHelpText(metrics);
 
-        flushSync(() => {
-          const newItems = this.state.items.slice();
-          const newItem = config.createNewItem(res.data);
-          newItems.push(newItem);
-
-          this.removePendingItem(itemId);
-
-          this.setState({ items: newItems }, () => {
-            this.updateCommonCredits();
-            this.updateUrl();
-          });
-        });
-      })
-      .catch((err) => {
-        if (!this._isMounted) return;
-
-        this.removePendingItem(itemId);
-
-        this.setState({ error: err.response.statusText });
-        console.log(err.response.data);
-      });
-  };
-
-  addPendingItem = (itemId) => {
-    const newPendingItems = this.state.pendingItems.slice();
-    newPendingItems.push({ id: itemId });
-    this.setState({ pendingItems: newPendingItems });
-  };
-
-  removePendingItem = (itemId) => {
-    const newPendingItems = this.state.pendingItems
-      .slice()
-      .filter((item) => item.id !== itemId);
-    this.setState({ pendingItems: newPendingItems });
-  };
-
-  updateCommonCredits = () => {
-    const { config } = this.props;
-
-    if (this.state.items.length < 2) {
-      this.setState({
-        commonCredits: [],
-        ...(config.resetExtraCounters ? config.resetExtraCounters() : {}),
-      });
-      return;
-    }
-
-    const creditLists = this.state.items
-      .map((item) => item.credits)
-      .sort((a, b) => a.length > b.length);
-    const numberOfLists = creditLists.length;
-    let commonCredits = [];
-    let extraCounters = config.initExtraCounters
-      ? config.initExtraCounters()
-      : {};
-
-    creditLists[0].forEach((credit) => {
-      let isCommon = true;
-
-      for (let i = 1; i < numberOfLists; i++) {
-        if (!this.creditInCreditList(credit, creditLists[i])) {
-          isCommon = false;
-          break;
-        }
-      }
-
-      if (isCommon) {
-        const processedCredit = config.processCommonCredit
-          ? config.processCommonCredit(credit)
-          : credit;
-        commonCredits.push(processedCredit);
-
-        if (config.updateExtraCounters) {
-          extraCounters = config.updateExtraCounters(credit, extraCounters);
-        }
-      }
-    });
-
-    this.setState({
-      commonCredits,
-      ...extraCounters,
-    });
-  };
-
-  updateUrl = () => {
-    const { config } = this.props;
-    const ids = this.state.items.map((item) => item.id);
-    const replaceOption =
-      config.urlReplaceOption !== undefined
-        ? { replace: config.urlReplaceOption }
-        : {};
-    this.props.navigate(`/${config.urlPath}/` + ids.join(","), replaceOption);
-  };
-
-  creditInCreditList = (credit, list) => {
-    for (const c of list) {
-      if (c.id === credit.id) {
-        return true;
-      }
-    }
-    return false;
-  };
-
-  removeItem = (itemIndex) => {
-    const { config } = this.props;
-    const newItems = this.state.items.slice();
-    const removedItem = newItems.splice(itemIndex, 1);
-
-    this.setState({ items: newItems }, () => {
-      this.updateCommonCredits();
-      this.updateUrl();
-    });
-
-    ReactGA.event({
-      category: config.gaCategory,
-      action: "remove",
-      value: parseInt(removedItem[0].id),
-      label: removedItem[0].name,
-    });
-  };
-
-  render() {
-    const { config } = this.props;
-    let helpText = config.getInitialHelpText();
-    let commonCredits = null;
-
-    if (this.state.items.length > 1) {
-      if (this.state.commonCredits.length > 0) {
-        helpText = config.getCommonCreditsHelpText(this.state);
-
-        commonCredits = (
-          <div className={styles.commonCreditsWrapper}>
-            <Credits
-              credits={this.state.commonCredits}
-              displayType="row"
-              expanded
-            />
-          </div>
-        );
-      } else {
-        helpText = config.noCommonCreditsText;
-      }
-    }
-
-    return (
-      <div className={styles.comparisonContainer} data-theme={config.theme}>
-        <div className={styles.autocompleteWrapper}>
-          <Autocomplete
-            matches={this.state.autocompleteNames}
-            change={this.searchChange}
-            select={this.searchSelect}
-            placeholder={config.placeholder}
-            focused={true}
-          />
+      commonCreditsElement = (
+        <div className={styles.commonCreditsWrapper}>
+          <Credits credits={commonCredits} displayType="row" fullListVisible />
         </div>
-        <div className={styles.helpText}>{helpText}</div>
-        {commonCredits}
-        <div className={styles.itemsContainer}>
-          {this.state.items.map((item, i) => (
-            <ComparedItem
-              key={i}
-              data={item}
-              remove={() => this.removeItem(i)}
-            />
-          ))}
-          {this.state.pendingItems.map((item) => (
-            <ComparedItem key={item.id} loading />
-          ))}
-        </div>
-      </div>
-    );
+      );
+    } else {
+      helpText = config.noCommonCreditsText;
+    }
   }
-}
-
-// Wrapper to provide React Router v6 hooks to class component
-const GenericComparisonWrapper = (props) => {
-  const params = useParams();
-  const navigate = useNavigate();
-  const location = useLocation();
 
   return (
-    <GenericComparison
-      {...props}
-      params={params}
-      navigate={navigate}
-      location={location}
-    />
+    <div className={styles.comparisonContainer} data-theme={config.theme}>
+      <div className={styles.autocompleteWrapper}>
+        <Autocomplete
+          onSearch={handleSearch}
+          onSelect={searchSelect}
+          placeholder={config.placeholder}
+          focused={true}
+        />
+      </div>
+      <div className={styles.helpText}>{helpText}</div>
+      {commonCreditsElement}
+      <div className={styles.itemsContainer}>
+        {items.map((item, i) => (
+          <ComparedItem
+            key={item.id}
+            data={item}
+            remove={() => removeItem(i)}
+          />
+        ))}
+        {pendingItems.map((item) => (
+          <ComparedItem key={item.id} loading />
+        ))}
+      </div>
+    </div>
   );
 };
 
-export default GenericComparisonWrapper;
+export default GenericComparison;

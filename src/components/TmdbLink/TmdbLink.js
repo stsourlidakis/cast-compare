@@ -1,5 +1,3 @@
-import React from "react";
-
 const TmdbLink = (props) => {
   const baseUrl = "https://www.themoviedb.org";
   return (
