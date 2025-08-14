@@ -1,5 +1,5 @@
 import GenericComparison from "../GenericComparison/GenericComparison";
-import { personAutocomplete, theMovieDB } from "../../axios";
+import { personAutocomplete, theMovieDB } from "../../api";
 import styles from "../GenericComparison/GenericComparison.module.css";
 
 const peopleConfig = {
